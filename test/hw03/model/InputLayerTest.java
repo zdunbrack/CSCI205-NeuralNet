@@ -13,8 +13,10 @@
 *
 * ****************************************
  */
-package hw03;
+package hw03.model;
 
+import hw03.model.Neuron;
+import hw03.model.InputLayer;
 import java.util.ArrayList;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;

@@ -13,8 +13,9 @@
 *
 * ****************************************
  */
-package hw03;
+package hw03.model;
 
+import hw03.model.ANNClient;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;

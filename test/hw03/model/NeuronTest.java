@@ -13,8 +13,11 @@
 *
 * ****************************************
  */
-package hw03;
+package hw03.model;
 
+import hw03.model.Neuron;
+import hw03.model.InputActivationFunction;
+import hw03.model.Edge;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;

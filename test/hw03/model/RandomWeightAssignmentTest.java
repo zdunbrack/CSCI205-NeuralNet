@@ -13,8 +13,9 @@
 *
 * ****************************************
  */
-package hw03;
+package hw03.model;
 
+import hw03.model.RandomWeightAssignment;
 import org.junit.After;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertNotEquals;

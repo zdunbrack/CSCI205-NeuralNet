@@ -13,8 +13,15 @@
 *
 * ****************************************
  */
-package hw03;
+package hw03.model;
 
+import hw03.model.NeuralNet;
+import hw03.model.RandomWeightAssignment;
+import hw03.model.OutputLayer;
+import hw03.model.HiddenLayer;
+import hw03.model.Layer;
+import hw03.model.NeuralNetConstructionException;
+import hw03.model.InputLayer;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
