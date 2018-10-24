@@ -317,31 +317,26 @@ public class NeuralNetController
 	@FXML
 	private void onSingleStepButtonClick()
 	{
-		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onSingleEpochButtonClick()
 	{
-		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onClassifyButtonClick()
 	{
-		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onLearnButtonClick()
 	{
-		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onStopButtonClick()
 	{
-		// Requires Task Functionality
 	}
 
 	@FXML
