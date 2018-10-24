@@ -8,44 +8,41 @@
  *
  * Project: csci205_hw
  * Package: hw02
- * File: SigmoidActivationFunction
+ * File: TanhActivationFunction
  * Description:
  * A legitimate ActivationFunction that converts any net input to a
- * value in the range (0, 1).
+ * value in the range (-1, 1).
  *
  * Updated by Josh and Zach Dunbrack in October 2018.
  * ****************************************
  */
-package hw03.model;
+package hw03.utility;
 
 import java.io.Serializable;
 
 /**
  * A legitimate {@link ActivationFunction} that converts any net input to a
- * value in the range (0, 1).
+ * value in the range (-1, 1).
  *
  * @author cld028
  */
-public class SigmoidActivationFunction implements Serializable,
-												  ActivationFunction
+public class TanhActivationFunction implements ActivationFunction, Serializable
 {
 
 	@Override
 	public double calcOutput(double netInput)
 	{
-		double outputVal = 1 / (1 + Math.exp(-netInput));
-		return outputVal;
+		return Math.tanh(netInput);
 	}
 
 	@Override
 	public double calcDerivOutput(double netInput)
 	{
-		return calcOutput(netInput) * (1 - calcOutput(netInput));
+		return 1 - Math.pow(calcOutput(netInput), 2);
 	}
 
-	@Override
 	public String toString()
 	{
-		return "Sigmoid";
+		return "Tanh";
 	}
 }

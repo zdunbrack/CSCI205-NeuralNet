@@ -18,6 +18,7 @@
  */
 package hw03.model;
 
+import hw03.utility.ActivationFunction;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,7 +65,11 @@ public class NeuralNet implements Serializable
 	 */
 	protected WeightAssignment weightAssignment = DEFAULT_WEIGHT_ASSIGNMENT;
 
-	NeuralNet()
+	/**
+	 * Generates a neural net with a 2-neuron input layer, a 3-neuron hidden
+	 * layer, and a 1-neuron output layer.
+	 */
+	public NeuralNet()
 	{
 		inputLayer = new InputLayer(2);
 		HiddenLayer hiddenLayer = new HiddenLayer(3);
@@ -79,7 +84,17 @@ public class NeuralNet implements Serializable
 		});
 	}
 
-	NeuralNet(List< Layer> layers, WeightAssignment weightAssignment)
+	/**
+	 * Generates a neural net with the given {@link Layer} objects, assigning
+	 * initial weights to the {@link Edge} objects as dictated in
+	 * {@code weightAssignment}.
+	 *
+	 * @param layers the layers involved in the neural net
+	 * @param weightAssignment the method of assigning weights; between -0.5 and
+	 * 0.5 randomly distributed if null
+	 * @throws NeuralNetConstructionException
+	 */
+	public NeuralNet(List<Layer> layers, WeightAssignment weightAssignment)
 	{
 		if (weightAssignment == null)
 		{

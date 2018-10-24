@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="rootBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hw03.mvc.NeuralNetController">
+   <children>
+      <MenuBar>
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+                  <MenuItem fx:id="selectFileItem" mnemonicParsing="false" onAction="#onSelectFileItemClick" text="Select Input File" />
+              <MenuItem fx:id="saveNetworkItem" mnemonicParsing="false" onAction="#onSaveNetworkItemClick" text="Save" />
+                  <MenuItem fx:id="loadNetworkItem" mnemonicParsing="false" onAction="#onLoadNetworkItemClick" text="Load" />
+                  <MenuItem fx:id="exitItem" mnemonicParsing="false" onAction="#onExitItemClick" text="Exit" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="ANN Options">
+            <items>
+              <MenuItem fx:id="setLearningRateItem" mnemonicParsing="false" onAction="#onSetLearningRateItemClick" text="Set Learning Rate" />
+                  <MenuItem fx:id="setMomentumItem" mnemonicParsing="false" onAction="#onSetMomentumItemClick" text="Set Momentum" />
+                  <MenuItem fx:id="setMaxEpochsItem" mnemonicParsing="false" onAction="#onSetMaxEpochsItemClick" text="Set Maximum Epochs" />
+                  <MenuItem fx:id="setEpochsPerUpdateItem" mnemonicParsing="false" onAction="#onSetEpochsPerUpdateItemClick" text="Set Epochs per Update" />
+                  <Menu mnemonicParsing="false" text="Select Activation Function">
+                    <items>
+                      <MenuItem fx:id="selectSigmoidItem" mnemonicParsing="false" onAction="#onSelectSigmoidItemClick" text="Sigmoid" />
+                        <MenuItem fx:id="selectReLUItem" mnemonicParsing="false" onAction="#onSelectReLUItemClick" text="Leaky ReLU" />
+                        <MenuItem fx:id="selectTanhItem" mnemonicParsing="false" onAction="#onSelectTanhItemClick" text="Hyperbolic Tangent" />
+                    </items>
+                  </Menu>
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <HBox>
+         <children>
+            <VBox fx:id="inputLayerColumn" prefWidth="150.0" />
+            <VBox fx:id="hiddenLayerColumn" prefWidth="150.0">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets></VBox>
+            <VBox fx:id="outputLayerColumn" prefWidth="150.0" />
+            <VBox fx:id="statusBox" alignment="TOP_CENTER" prefHeight="0.0" prefWidth="150.0" spacing="10.0">
+               <children>
+                  <Label fx:id="statusLabel" text="Status Summary" underline="true">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="currentSSELabel" text="SSE: " />
+                  <Label fx:id="currentEpochLabel" text="Epoch:" />
+                  <Label fx:id="currentFileLabel" text="File: " wrapText="true" />
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+      <HBox alignment="CENTER" spacing="15.0">
+         <children>
+            <Button fx:id="singleStepButton" mnemonicParsing="false" onAction="#onSingleStepButtonClick" prefHeight="25.0" text="Process Single Input" />
+            <Button fx:id="singleEpochButton" mnemonicParsing="false" onAction="#onSingleEpochButtonClick" prefHeight="25.0" prefWidth="130.0" text="Process Single Epoch" textAlignment="CENTER" />
+            <Button fx:id="classifyButton" mnemonicParsing="false" onAction="#onClassifyButtonClick" text="Classify" />
+            <Button fx:id="learnButton" mnemonicParsing="false" onAction="#onLearnButtonClick" text="Learn" />
+            <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onStopButtonClick" text="Stop" />
+         </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </children>
+</VBox>

@@ -15,7 +15,7 @@
  */
 package hw03.model;
 
-import hw03.model.SigmoidActivationFunction;
+import hw03.utility.SigmoidActivationFunction;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;

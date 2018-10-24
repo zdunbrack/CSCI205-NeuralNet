@@ -4,22 +4,35 @@
 *
 * Name: Josh Dunbrack, Zach Dunbrack
 * Date: Oct 23, 2018
-* Time: 10:58:11 AM
+* Time: 9:53:49 PM
 *
 * Project: csci205_hw03
 * Package: hw03.model
-* File: NeuralNetModel
+* File: SimplerDoubleProperty
 * Description:
 *
 * ****************************************
  */
 package hw03.model;
 
+import java.io.Serializable;
+import javafx.beans.property.SimpleDoubleProperty;
+
 /**
  *
  * @author zachd
  */
-public class NeuralNetModel
+class SimplerDoubleProperty extends SimpleDoubleProperty implements
+		Serializable
 {
 
+	SimplerDoubleProperty()
+	{
+		super();
+	}
+
+	SimplerDoubleProperty(double value)
+	{
+		super(value);
+	}
 }

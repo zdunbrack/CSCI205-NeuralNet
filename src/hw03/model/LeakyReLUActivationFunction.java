@@ -18,6 +18,7 @@
  */
 package hw03.model;
 
+import hw03.utility.ActivationFunction;
 import java.io.Serializable;
 
 /**

@@ -17,6 +17,8 @@
  */
 package hw03.model;
 
+import hw03.utility.ActivationFunction;
+import hw03.utility.SigmoidActivationFunction;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -40,7 +42,9 @@ public class Neuron implements Serializable
 	// The net input of the weighted sum of the previous neurons' values.
 	private double netInput;
 	// The threshold value subtracted from netInput before passing it into the activation function.
-	private double theta;
+	private SimplerDoubleProperty theta;
+	// The transformed result of the input into the neuron.
+	private SimplerDoubleProperty result;
 	// The default threshold for the neuron.
 	private final static double DEFAULT_THETA = -0.5;
 	// The default activation function for the neuron.
@@ -48,7 +52,8 @@ public class Neuron implements Serializable
 
 	Neuron()
 	{
-		this.theta = DEFAULT_THETA;
+		this.result = new SimplerDoubleProperty(0);
+		this.theta = new SimplerDoubleProperty(DEFAULT_THETA);
 		this.activationFunction = DEFAULT__ACTIVATION_FUNCTION;
 	}
 
@@ -68,6 +73,7 @@ public class Neuron implements Serializable
 		{
 			netInput += edge.getWeightedResult();
 		}
+		result.set(activationFunction.calcOutput(netInput - theta.get()));
 	}
 
 	/**
@@ -80,7 +86,7 @@ public class Neuron implements Serializable
 	 */
 	public double getDerivResult()
 	{
-		return activationFunction.calcDerivOutput(netInput - theta);
+		return activationFunction.calcDerivOutput(netInput - theta.get());
 	}
 
 	/**
@@ -103,7 +109,7 @@ public class Neuron implements Serializable
 	 */
 	public void updateTheta(double error, double alpha)
 	{
-		theta += alpha * -1 * error;
+		theta.set(theta.get() + alpha * -1 * error);
 	}
 
 	/**
@@ -125,7 +131,7 @@ public class Neuron implements Serializable
 	 */
 	public double getResult()
 	{
-		return activationFunction.calcOutput(netInput - theta);
+		return result.get();
 	}
 
 	/**
@@ -145,7 +151,7 @@ public class Neuron implements Serializable
 	 */
 	public double getTheta()
 	{
-		return theta;
+		return theta.get();
 	}
 
 	/**
@@ -155,7 +161,7 @@ public class Neuron implements Serializable
 	 */
 	public void setTheta(double theta)
 	{
-		this.theta = theta;
+		this.theta.set(theta);
 	}
 
 	/**
@@ -198,5 +204,15 @@ public class Neuron implements Serializable
 	public void setActivationFunction(ActivationFunction actFunc)
 	{
 		this.activationFunction = actFunc;
+	}
+
+	public SimplerDoubleProperty getResultProperty()
+	{
+		return result;
+	}
+
+	public SimplerDoubleProperty getThetaProperty()
+	{
+		return theta;
 	}
 }

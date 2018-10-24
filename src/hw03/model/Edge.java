@@ -32,7 +32,7 @@ public class Edge implements Serializable
 	// The last weight of the edge.
 	private double prevWeight;
 	// The current weight of the edge.
-	private double weight;
+	private SimplerDoubleProperty weight;
 	// The edge's current error gradient, representing its difference from a more accurate classification.
 	private double errorGradient = 0;
 	// The neuron sending data to this edge.
@@ -43,14 +43,14 @@ public class Edge implements Serializable
 	Edge(Neuron from)
 	{
 		this.prevWeight = 0;
-		this.weight = 0;
+		this.weight = new SimplerDoubleProperty(0);
 		this.from = from;
 	}
 
 	Edge(Neuron from, double weight)
 	{
 		this.prevWeight = weight;
-		this.weight = weight;
+		this.weight = new SimplerDoubleProperty(weight);
 		this.from = from;
 	}
 
@@ -74,7 +74,7 @@ public class Edge implements Serializable
 	 */
 	public double getWeightedResult()
 	{
-		return weight * from.getResult();
+		return weight.get() * from.getResult();
 	}
 
 	/**
@@ -86,9 +86,10 @@ public class Edge implements Serializable
 	 */
 	public void update(double alpha)
 	{
-		double prevWeightDelta = this.weight - this.prevWeight;
-		this.prevWeight = this.weight;
-		this.weight += alpha * from.getResult() * errorGradient + momentumConstant * prevWeightDelta;
+		double prevWeightDelta = weight.get() - prevWeight;
+		prevWeight = weight.get();
+		weight.set(
+				weight.get() + alpha * from.getResult() * errorGradient + momentumConstant * prevWeightDelta);
 	}
 
 	/**
@@ -119,7 +120,7 @@ public class Edge implements Serializable
 	 */
 	public double getWeight()
 	{
-		return weight;
+		return weight.get();
 	}
 
 	/**
@@ -129,6 +130,16 @@ public class Edge implements Serializable
 	 */
 	public void setWeight(double weight)
 	{
-		this.weight = weight;
+		this.weight.set(weight);
+	}
+
+	/**
+	 * Returns the property associated with the edge's weight.
+	 *
+	 * @return the property associated with the edge's weight
+	 */
+	public SimplerDoubleProperty getWeightProperty()
+	{
+		return weight;
 	}
 }

@@ -14,7 +14,7 @@
 * input of a neuron before passing it on to the next layer.
 * ****************************************
  */
-package hw03.model;
+package hw03.utility;
 
 /**
  * An interface representing an activation function that is applied to the net
