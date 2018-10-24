@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Scanner;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -102,7 +103,9 @@ public class NeuralNetController
 
 	private Stage stage;
 
-	private static double CIRCLE_RADIUS = 20;
+	private double[][] inputs;
+
+	private static final double CIRCLE_RADIUS = 20;
 
 	@FXML
 	public void initialize()
@@ -157,17 +160,17 @@ public class NeuralNetController
 			{
 				Line edge = new Line();
 				edge.setStartX(
-					inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+						inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
 				edge.setStartY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
-																		inputLayerColumn.getChildren().size(),
-																		inputLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
+																			inputLayerColumn.getChildren().size(),
+																			inputLayerColumn.getSpacing()));
 				edge.setEndX(
-					hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
 				edge.setEndY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
-																		hiddenLayerColumn.getChildren().size(),
-																		hiddenLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
+																			hiddenLayerColumn.getChildren().size(),
+																			hiddenLayerColumn.getSpacing()));
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}
@@ -177,17 +180,17 @@ public class NeuralNetController
 			{
 				Line edge = new Line();
 				edge.setStartX(
-					hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
 				edge.setStartY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
-																		hiddenLayerColumn.getChildren().size(),
-																		hiddenLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
+																			hiddenLayerColumn.getChildren().size(),
+																			hiddenLayerColumn.getSpacing()));
 				edge.setEndX(
-					outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+						outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
 				edge.setEndY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
-																		outputLayerColumn.getChildren().size(),
-																		outputLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
+																			outputLayerColumn.getChildren().size(),
+																			outputLayerColumn.getSpacing()));
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}
@@ -203,7 +206,52 @@ public class NeuralNetController
 	@FXML
 	private void onSelectFileItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Load Training/Classification File");
+		fileChooser.getExtensionFilters().clear();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+				"Comma Separated Values", "*.csv"));
+		File dataFile = fileChooser.showOpenDialog(stage);
+		Scanner fileScanner;
+		while (dataFile != null)
+		{
+			try
+			{
+				fileScanner = new Scanner(dataFile);
+				String fileString = "";
+				while (fileScanner.hasNext())
+				{
+					fileString += fileScanner.nextLine();
+					fileString += "\n";
+				}
+				fileString = fileString.substring(0, fileString.length() - 1);
+				String[] inputSets = fileString.split("\n");
+				String[][] inputStrings = new String[inputSets.length][];
+				int numInputs = model.getLayers()[0].getNeurons().size();
+				int numOutputs = model.getLayers()[model.getLayers().length - 1].getNeurons().size();
+				for (int i = 0; i < inputStrings.length; i++)
+				{
+					inputStrings[i] = inputSets[i].split(",");
+					if (!(inputStrings[i].length == numInputs + numOutputs || inputStrings[i].length == numInputs))
+					{
+						throw new IllegalArgumentException(
+								"Input file could not be parsed as classification, testing, or learning input.");
+					}
+				}
+				inputs = new double[inputStrings.length][inputStrings[0].length];
+				for (int i = 0; i < inputStrings.length; i++)
+				{
+					for (int j = 0; j < inputStrings[i].length; j++)
+					{
+						inputs[i][j] = Double.parseDouble(inputStrings[i][j]);
+					}
+				}
+				break;
+			} catch (IOException | IllegalArgumentException e)
+			{
+				dataFile = fileChooser.showOpenDialog(stage);
+			}
+		}
 	}
 
 	@FXML
@@ -211,15 +259,17 @@ public class NeuralNetController
 	{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save Configuration File");
-		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-			"Neural Net Data File", "*.dat"));
+		fileChooser.getExtensionFilters().add(
+				new FileChooser.ExtensionFilter(
+						"Neural Net Data File", "*.dat"));
 		File exportFile = fileChooser.showSaveDialog(stage);
 		ObjectOutputStream out;
 		while (exportFile != null)
 		{
 			try
 			{
-				out = new ObjectOutputStream(new FileOutputStream(exportFile));
+				out = new ObjectOutputStream(
+						new FileOutputStream(exportFile));
 				out.writeObject(model);
 				out.flush();
 				out.close();
@@ -236,8 +286,9 @@ public class NeuralNetController
 	{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Load Configuration File");
-		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-			"Neural Net Data File", "*.dat"));
+		fileChooser.getExtensionFilters().add(
+				new FileChooser.ExtensionFilter(
+						"Neural Net Data File", "*.dat"));
 		File importFile = fileChooser.showOpenDialog(stage);
 		NeuralNet importedNet;
 		while (importFile != null)
@@ -245,8 +296,8 @@ public class NeuralNetController
 			try
 			{
 				ObjectInputStream in = new ObjectInputStream(
-					new FileInputStream(
-						importFile));
+						new FileInputStream(
+								importFile));
 				importedNet = (NeuralNet) in.readObject();
 				setModel(importedNet);
 				break;
@@ -337,6 +388,7 @@ public class NeuralNetController
 
 	private void assertNonNull()
 	{
+		assert rootBox != null : "fx:id=\"rootBox\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert neuralNetDisplayRow != null : "fx:id=\"neuralNetDisplayRow\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert neuralNetDisplayPane != null : "fx:id=\"neuralNetDisplayPane\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert loadNetworkItem != null : "fx:id=\"loadNetworkItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
