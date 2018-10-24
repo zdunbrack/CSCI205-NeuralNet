@@ -42,10 +42,10 @@ public class NeuralNetMain extends Application
 	public void start(Stage primaryStage) throws Exception
 	{
 		FXMLLoader loader = new FXMLLoader(
-				this.getClass().getClassLoader().getResource(
+				this.getClass().getResource(
 						"hw03/mvc/NeuralNetView.fxml"));
 
-		Parent root = (Parent) loader.load();
+		Parent root = (Parent)loader.load();
 
 		controller = loader.getController();
 		controller.setModel(model);

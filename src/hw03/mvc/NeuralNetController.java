@@ -15,7 +15,10 @@
  */
 package hw03.mvc;
 
+import hw03.model.LeakyReLUActivationFunction;
 import hw03.model.NeuralNet;
+import hw03.utility.SigmoidActivationFunction;
+import hw03.utility.TanhActivationFunction;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -122,17 +125,17 @@ public class NeuralNetController
 		Stage stage = new Stage();
 		File importFile = fileChooser.showOpenDialog(stage);
 		NeuralNet importedNet;
-		while (importFile != null)
+		while(importFile != null)
 		{
 			try
 			{
 				ObjectInputStream in = new ObjectInputStream(
 						new FileInputStream(
 								importFile));
-				importedNet = (NeuralNet) in.readObject();
+				importedNet = (NeuralNet)in.readObject();
 				setModel(importedNet);
 				break;
-			} catch (IOException | ClassNotFoundException e)
+			} catch(IOException | ClassNotFoundException e)
 			{
 				importFile = fileChooser.showOpenDialog(stage);
 			}
@@ -190,43 +193,51 @@ public class NeuralNetController
 	@FXML
 	private void onSetLearningRateItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// set field
 	}
 
 	@FXML
 	private void onSetMomentumItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		model.setMomentumConstant(0);
 	}
 
 	@FXML
 	private void onSetMaxEpochsItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		model.setMaxEpochs(0);
 	}
 
 	@FXML
 	private void onSetEpochsPerUpdateItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// set field
 	}
 
 	@FXML
 	private void onSelectSigmoidItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		resetNeuralNet();
+		model.setActivationFunction(new SigmoidActivationFunction());
 	}
 
 	@FXML
 	private void onSelectReLUItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		resetNeuralNet();
+		model.setActivationFunction(new LeakyReLUActivationFunction());
 	}
 
 	@FXML
 	private void onSelectTanhItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		resetNeuralNet();
+		model.setActivationFunction(new TanhActivationFunction());
+	}
+
+	private void resetNeuralNet()
+	{
+		setModel(new NeuralNet(model.getResetLayers(), null));
 	}
 
 	private void assertNonNull()
