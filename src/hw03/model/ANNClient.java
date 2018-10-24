@@ -94,16 +94,16 @@ public final class ANNClient implements Serializable
 		while (true)
 		{
 			System.out.println(
-					"Would you like to create a new neural net or import your own config file?");
+				"Would you like to create a new neural net or import your own config file?");
 			System.out.print(
-					"Respond \"new\" for a new neural net or \"import\" to import one: ");
+				"Respond \"new\" for a new neural net or \"import\" to import one: ");
 			resp = sc.next();
 			if (resp.equals("new") || resp.equals("import"))
 			{
 				break;
 			}
 			System.out.println(
-					"Please respond with one of the provided options.");
+				"Please respond with one of the provided options.");
 		}
 		if (resp.equals("new"))
 		{
@@ -122,17 +122,17 @@ public final class ANNClient implements Serializable
 		while (true)
 		{
 			System.out.println(
-					"What activation function would you like to use?");
+				"What activation function would you like to use?");
 			System.out.print(
-					"Respond \"Sigmoid\", \"Tanh\", or \"ReLU\" ");
+				"Respond \"Sigmoid\", \"Tanh\", or \"ReLU\" ");
 			resp = sc.next();
 			if (resp.equals("Sigmoid") || resp.equals("ReLU") || resp.equals(
-					"Tanh"))
+				"Tanh"))
 			{
 				break;
 			}
 			System.out.println(
-					"Please respond with one of the provided options.");
+				"Please respond with one of the provided options.");
 		}
 		switch (resp)
 		{
@@ -141,7 +141,7 @@ public final class ANNClient implements Serializable
 				break;
 			case "ReLU":
 				neuralNet.setActivationFunction(
-						new LeakyReLUActivationFunction());
+					new LeakyReLUActivationFunction());
 				break;
 			case "Tanh":
 				neuralNet.setActivationFunction(new TanhActivationFunction());
@@ -160,7 +160,7 @@ public final class ANNClient implements Serializable
 		if (hiddenLayers > 0)
 		{
 			System.out.print(
-					"How many neurons would you like in your hidden layers? ");
+				"How many neurons would you like in your hidden layers? ");
 		}
 		int neuronsPerHiddenLayer = sc.nextInt();
 		System.out.println("Assigning random initial weights...");
@@ -184,15 +184,15 @@ public final class ANNClient implements Serializable
 			} catch (FileNotFoundException e)
 			{
 				System.out.print(
-						"File not found. Please enter another file name. ");
+					"File not found. Please enter another file name. ");
 			} catch (IOException ex)
 			{
 				System.out.print(
-						"Invalid NeuralNet file. Please enter another file name. ");
+					"Invalid NeuralNet file. Please enter another file name. ");
 			} catch (ClassNotFoundException ex)
 			{
 				System.out.print(
-						"Invalid NeuralNet file. Please enter another file name. ");
+					"Invalid NeuralNet file. Please enter another file name. ");
 			}
 		}
 		return n;
@@ -210,25 +210,25 @@ public final class ANNClient implements Serializable
 		}
 		layers.add(new OutputLayer(1));
 		NeuralNet n = new NeuralNet(layers, new RandomWeightAssignment()
-							{
-								@Override
-								public double assignWeight()
 								{
-									Random rnd = new Random();
-									boolean pos = rnd.nextBoolean();
-									//Get random double 0 < rndNum < 2.4/inputs
-									double rndNum = rnd.nextDouble();
-									rndNum = rndNum * 2.4 / numInputs;
-									if (pos)
+									@Override
+									public double assignWeight()
 									{
-										return (rndNum);
+										Random rnd = new Random();
+										boolean pos = rnd.nextBoolean();
+										//Get random double 0 < rndNum < 2.4/inputs
+										double rndNum = rnd.nextDouble();
+										rndNum = rndNum * 2.4 / numInputs;
+										if (pos)
+										{
+											return (rndNum);
+										}
+										else
+										{
+											return (-rndNum);
+										}
 									}
-									else
-									{
-										return (-rndNum);
-									}
-								}
-							});
+								});
 		return n;
 	}
 
@@ -248,7 +248,7 @@ public final class ANNClient implements Serializable
 			} catch (FileNotFoundException e)
 			{
 				System.out.print(
-						"File not found. Please enter another file name. ");
+					"File not found. Please enter another file name. ");
 			}
 		}
 		return fileScanner;
@@ -270,7 +270,7 @@ public final class ANNClient implements Serializable
 			} catch (FileNotFoundException e)
 			{
 				System.out.print(
-						"File not found. Please enter another file name. ");
+					"File not found. Please enter another file name. ");
 			}
 		}
 		return out;
@@ -283,16 +283,16 @@ public final class ANNClient implements Serializable
 		while (true)
 		{
 			System.out.println(
-					"Would you like to classify data or train the given neural net on a set of data?");
+				"Would you like to classify data or train the given neural net on a set of data?");
 			System.out.print(
-					"Respond \"classify\" to classify a given input set or \"train\" to train the neural net on a set of inputs and output(s): ");
+				"Respond \"classify\" to classify a given input set or \"train\" to train the neural net on a set of inputs and output(s): ");
 			resp = sc.next();
 			if (resp.equals("classify") || resp.equals("train"))
 			{
 				break;
 			}
 			System.out.println(
-					"Please respond with one of the provided options.");
+				"Please respond with one of the provided options.");
 		}
 		learning = resp.equals("train");
 	}
@@ -301,7 +301,7 @@ public final class ANNClient implements Serializable
 	private static void takeDataSet()
 	{
 		Scanner fileScanner = createImportScanner(
-				"What file contains the list of input values for the neural network?");
+			"What file contains the list of input values for the neural network?");
 		String fileString = "";
 		while (fileScanner.hasNext())
 		{
@@ -327,7 +327,7 @@ public final class ANNClient implements Serializable
 			else
 			{
 				throw new IllegalArgumentException(
-						"Input file could not be parsed as classification, testing, or learning input.\n");
+					"Input file could not be parsed as classification, testing, or learning input.\n");
 			}
 		}
 		inputs = new double[inputStrings.length][inputStrings[0].length];
@@ -341,10 +341,10 @@ public final class ANNClient implements Serializable
 				} catch (NumberFormatException e)
 				{
 					System.out.println(
-							"Non-numeric value found in input file. ");
+						"Non-numeric value found in input file. ");
 					System.out.println(
-							"Please ensure that the file contains only decimal values "
-							+ "in a CSV format as dictated in the readme.");
+						"Please ensure that the file contains only decimal values "
+						+ "in a CSV format as dictated in the readme.");
 					System.out.println("Terminating program.");
 					System.exit(0);
 				}
@@ -356,16 +356,16 @@ public final class ANNClient implements Serializable
 	private static void teachNeuralNet()
 	{
 		System.out.print(
-				"What would you like the to be maximum SSE at which the neural net will stop learning? ");
+			"What would you like the to be maximum SSE at which the neural net will stop learning? ");
 		neuralNet.setMaxError(sc.nextDouble());
 		System.out.print("After how many epochs should the neural net give up? ");
 		neuralNet.setMaxEpochs(sc.nextInt());
 		neuralNet.learn(inputs);
 		System.out.println("Performance metrics: ");
 		System.out.println(
-				"Average SSE after training: " + neuralNet.getAvgSSE());
+			"Average SSE after training: " + neuralNet.getAvgSSE());
 		System.out.println(
-				"Time to train: " + neuralNet.getSecondsToTrain() + "s");
+			"Time to train: " + neuralNet.getSecondsToTrain() + "s");
 		System.out.println("Number of epochs to train: " + neuralNet.getEpochs());
 		exportNeuralNet();
 	}
@@ -375,7 +375,7 @@ public final class ANNClient implements Serializable
 	{
 		ObjectOutputStream out;
 		System.out.print(
-				"In which file would you like to store the neural net? ");
+			"In which file would you like to store the neural net? ");
 		while (true)
 		{
 			String fileName = sc.next();
@@ -389,15 +389,14 @@ public final class ANNClient implements Serializable
 			} catch (FileNotFoundException e)
 			{
 				System.out.print(
-						"File not found. Please enter another file name. ");
+					"File not found. Please enter another file name. ");
 			} catch (IOException ex)
 			{
 				System.out.println(ex.getMessage());
 				System.out.print(
-						"Invalid output file. Please enter another file name. ");
+					"Invalid output file. Please enter another file name. ");
 			}
 		}
-
 	}
 
 	// Classifies the user's input(s) and outputs the resulting value(s) to a file.
@@ -428,12 +427,12 @@ public final class ANNClient implements Serializable
 				for (int j = 0; j < classifications[i].length; j++)
 				{
 					testSSE += Math.pow(
-							classifications[i][j] - expectedOutputs[i][j], 2);
+						classifications[i][j] - expectedOutputs[i][j], 2);
 				}
 			}
 			testSSE /= classifications.length;
 			System.out.println(
-					"Average sum of squared error over test data: " + testSSE);
+				"Average sum of squared error over test data: " + testSSE);
 		}
 		outputClassifications(classifications);
 	}
@@ -442,14 +441,14 @@ public final class ANNClient implements Serializable
 	private static void outputClassifications(double[][] classifications)
 	{
 		PrintWriter out = createExportPrintWriter(
-				"What file would you like to store the classification results in?");
+			"What file would you like to store the classification results in?");
 		String[][] classificationStrings = new String[classifications.length][classifications[0].length];
 		for (int i = 0; i < classificationStrings.length; i++)
 		{
 			for (int j = 0; j < classificationStrings[i].length; j++)
 			{
 				classificationStrings[i][j] = String.valueOf(
-						classifications[i][j]);
+					classifications[i][j]);
 			}
 			out.print(String.join(" ", classificationStrings[i]));
 			if (i < classificationStrings.length - 1)
@@ -468,16 +467,16 @@ public final class ANNClient implements Serializable
 		while (true)
 		{
 			System.out.println(
-					"Would you like to terminate the program or continue working with this neural net?");
+				"Would you like to terminate the program or continue working with this neural net?");
 			System.out.print(
-					"Respond \"terminate\" to terminate the program or \"continue\" to continue the program. ");
+				"Respond \"terminate\" to terminate the program or \"continue\" to continue the program. ");
 			resp = sc.next();
 			if (resp.equals("terminate") || resp.equals("continue"))
 			{
 				break;
 			}
 			System.out.println(
-					"Please respond with one of the provided options.");
+				"Please respond with one of the provided options.");
 		}
 		terminating = resp.equals("terminate");
 	}

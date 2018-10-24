@@ -19,8 +19,10 @@ import hw03.model.Layer;
 import hw03.model.NeuralNet;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -199,6 +201,37 @@ public class NeuralNetController
 	}
 
 	@FXML
+	private void onSelectFileItemClick()
+	{
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	@FXML
+	private void onSaveNetworkItemClick()
+	{
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Save Configuration File");
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+			"Neural Net Data File", "*.dat"));
+		File exportFile = fileChooser.showSaveDialog(stage);
+		ObjectOutputStream out;
+		while (exportFile != null)
+		{
+			try
+			{
+				out = new ObjectOutputStream(new FileOutputStream(exportFile));
+				out.writeObject(model);
+				out.flush();
+				out.close();
+				break;
+			} catch (IOException e)
+			{
+				exportFile = fileChooser.showSaveDialog(stage);
+			}
+		}
+	}
+
+	@FXML
 	private void onLoadNetworkItemClick()
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -233,85 +266,73 @@ public class NeuralNetController
 	@FXML
 	private void onSingleStepButtonClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onSingleEpochButtonClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onClassifyButtonClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onLearnButtonClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onStopButtonClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@FXML
-	private void onSelectFileItemClick()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
-
-	@FXML
-	private void onSaveNetworkItemClick()
-	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// Requires Task Functionality
 	}
 
 	@FXML
 	private void onSetLearningRateItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	@FXML
 	private void onSetMomentumItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	@FXML
 	private void onSetMaxEpochsItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	@FXML
 	private void onSetEpochsPerUpdateItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	@FXML
 	private void onSelectSigmoidItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	@FXML
 	private void onSelectReLUItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	@FXML
 	private void onSelectTanhItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
 	}
 
 	private void assertNonNull()
