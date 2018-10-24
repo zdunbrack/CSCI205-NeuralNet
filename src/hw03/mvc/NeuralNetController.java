@@ -15,6 +15,7 @@
  */
 package hw03.mvc;
 
+import hw03.model.Layer;
 import hw03.model.NeuralNet;
 import java.io.File;
 import java.io.FileInputStream;
@@ -24,7 +25,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -35,6 +41,10 @@ import javafx.stage.Stage;
 public class NeuralNetController
 {
 
+	@FXML
+	private Pane neuralNetDisplayPane;
+	@FXML
+	private HBox neuralNetDisplayRow;
 	@FXML
 	private VBox rootBox;
 	@FXML
@@ -88,6 +98,10 @@ public class NeuralNetController
 
 	private NeuralNet model;
 
+	private Stage stage;
+
+	private static double CIRCLE_RADIUS = 20;
+
 	@FXML
 	public void initialize()
 	{
@@ -109,7 +123,79 @@ public class NeuralNetController
 	// Creates the display representing the system's current neural net.
 	private void initializeNeuralNetDisplay()
 	{
+		inputLayerColumn.getChildren().clear();
+		hiddenLayerColumn.getChildren().clear();
+		outputLayerColumn.getChildren().clear();
+		neuralNetDisplayPane.getChildren().clear();
+		neuralNetDisplayPane.getChildren().add(neuralNetDisplayRow);
+		Layer[] layers = model.getLayers();
+		for (int i = 0; i < layers[0].getNeurons().size(); i++)
+		{
+			Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
+			neuronRepresentation.fillProperty().set(Color.RED);
+			inputLayerColumn.getChildren().add(neuronRepresentation);
+		}
+		for (int i = 0; i < layers[1].getNeurons().size(); i++)
 
+		{
+			Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
+			neuronRepresentation.fillProperty().set(Color.GREEN);
+			hiddenLayerColumn.getChildren().add(neuronRepresentation);
+		}
+		for (int i = 0; i < layers[2].getNeurons().size(); i++)
+		{
+			Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
+			neuronRepresentation.fillProperty().set(Color.BLUE);
+			outputLayerColumn.getChildren().add(neuronRepresentation);
+		}
+		stage.sizeToScene();
+		for (int i = 0; i < hiddenLayerColumn.getChildren().size(); i++)
+		{
+			for (int j = 0; j < inputLayerColumn.getChildren().size(); j++)
+			{
+				Line edge = new Line();
+				edge.setStartX(
+					inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+				edge.setStartY(
+					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
+																		inputLayerColumn.getChildren().size(),
+																		inputLayerColumn.getSpacing()));
+				edge.setEndX(
+					hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+				edge.setEndY(
+					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
+																		hiddenLayerColumn.getChildren().size(),
+																		hiddenLayerColumn.getSpacing()));
+				neuralNetDisplayPane.getChildren().add(edge);
+			}
+		}
+		for (int i = 0; i < outputLayerColumn.getChildren().size(); i++)
+		{
+			for (int j = 0; j < hiddenLayerColumn.getChildren().size(); j++)
+			{
+				Line edge = new Line();
+				edge.setStartX(
+					hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+				edge.setStartY(
+					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
+																		hiddenLayerColumn.getChildren().size(),
+																		hiddenLayerColumn.getSpacing()));
+				edge.setEndX(
+					outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+				edge.setEndY(
+					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
+																		outputLayerColumn.getChildren().size(),
+																		outputLayerColumn.getSpacing()));
+				neuralNetDisplayPane.getChildren().add(edge);
+			}
+		}
+		stage.sizeToScene();
+	}
+
+	private double heightInVBox(int index, int numNeurons, double spacing)
+	{
+		double numSections = -1 * ((numNeurons - 1) / 2.0 - index) + 0.5;
+		return numSections * (2 * CIRCLE_RADIUS + spacing) - CIRCLE_RADIUS - spacing / 2;
 	}
 
 	@FXML
@@ -118,8 +204,7 @@ public class NeuralNetController
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Load Configuration File");
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-				"Neural Net Data File", "*.dat"));
-		Stage stage = new Stage();
+			"Neural Net Data File", "*.dat"));
 		File importFile = fileChooser.showOpenDialog(stage);
 		NeuralNet importedNet;
 		while (importFile != null)
@@ -127,8 +212,8 @@ public class NeuralNetController
 			try
 			{
 				ObjectInputStream in = new ObjectInputStream(
-						new FileInputStream(
-								importFile));
+					new FileInputStream(
+						importFile));
 				importedNet = (NeuralNet) in.readObject();
 				setModel(importedNet);
 				break;
@@ -142,7 +227,7 @@ public class NeuralNetController
 	@FXML
 	private void onExitItemClick()
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		System.exit(0);
 	}
 
 	@FXML
@@ -231,6 +316,8 @@ public class NeuralNetController
 
 	private void assertNonNull()
 	{
+		assert neuralNetDisplayRow != null : "fx:id=\"neuralNetDisplayRow\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
+		assert neuralNetDisplayPane != null : "fx:id=\"neuralNetDisplayPane\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert loadNetworkItem != null : "fx:id=\"loadNetworkItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert exitItem != null : "fx:id=\"exitItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert inputLayerColumn != null : "fx:id=\"inputLayerColumn\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
@@ -255,5 +342,10 @@ public class NeuralNetController
 		assert selectSigmoidItem != null : "fx:id=\"selectSigmoidItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert selectReLUItem != null : "fx:id=\"selectReLUItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
 		assert selectTanhItem != null : "fx:id=\"selectTanhItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
+	}
+
+	public void setStage(Stage stage)
+	{
+		this.stage = stage;
 	}
 }

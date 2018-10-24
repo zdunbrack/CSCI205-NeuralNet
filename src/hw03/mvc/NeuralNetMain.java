@@ -21,6 +21,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 /**
  *
@@ -42,14 +43,18 @@ public class NeuralNetMain extends Application
 	public void start(Stage primaryStage) throws Exception
 	{
 		FXMLLoader loader = new FXMLLoader(
-				this.getClass().getClassLoader().getResource(
-						"hw03/mvc/NeuralNetView.fxml"));
+			this.getClass().getClassLoader().getResource(
+				"hw03/mvc/NeuralNetView.fxml"));
 
 		Parent root = (Parent) loader.load();
 
 		controller = loader.getController();
-		controller.setModel(model);
 		Scene scene = new Scene(root);
+		primaryStage.setOnShown((WindowEvent event) ->
+		{
+			controller.setStage(primaryStage);
+			controller.setModel(model);
+		});
 		primaryStage.setTitle("Neural Net GUI");
 		primaryStage.setScene(scene);
 		primaryStage.show();

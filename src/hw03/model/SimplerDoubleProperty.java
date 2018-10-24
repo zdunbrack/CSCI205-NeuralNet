@@ -22,8 +22,8 @@ import javafx.beans.property.SimpleDoubleProperty;
  *
  * @author zachd
  */
-class SimplerDoubleProperty extends SimpleDoubleProperty implements
-		Serializable
+public class SimplerDoubleProperty extends SimpleDoubleProperty implements
+	Serializable
 {
 
 	SimplerDoubleProperty()
