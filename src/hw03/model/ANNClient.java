@@ -19,6 +19,7 @@
  */
 package hw03.model;
 
+import hw03.utility.LeakyReLUActivationFunction;
 import hw03.utility.SigmoidActivationFunction;
 import hw03.utility.TanhActivationFunction;
 import java.io.File;

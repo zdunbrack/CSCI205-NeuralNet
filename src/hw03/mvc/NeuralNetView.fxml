@@ -2,16 +2,18 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckMenuItem?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hw03.mvc.NeuralNetController">
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hw03.mvc.NeuralNetController">
    <children>
       <MenuBar>
         <menus>
@@ -25,22 +27,24 @@
           </Menu>
           <Menu mnemonicParsing="false" text="ANN Options">
             <items>
+                  <MenuItem fx:id="configureANNItem" mnemonicParsing="false" onAction="#onConfigureANNItemClick" text="Configure ANN" />
               <MenuItem fx:id="setLearningRateItem" mnemonicParsing="false" onAction="#onSetLearningRateItemClick" text="Set Learning Rate" />
                   <MenuItem fx:id="setMomentumItem" mnemonicParsing="false" onAction="#onSetMomentumItemClick" text="Set Momentum" />
+                  <MenuItem fx:id="setMaxSSEItem" mnemonicParsing="false" text="Set Maximum Acceptable SSE" />
                   <MenuItem fx:id="setMaxEpochsItem" mnemonicParsing="false" onAction="#onSetMaxEpochsItemClick" text="Set Maximum Epochs" />
                   <MenuItem fx:id="setEpochsPerUpdateItem" mnemonicParsing="false" onAction="#onSetEpochsPerUpdateItemClick" text="Set Epochs per Update" />
-                  <Menu mnemonicParsing="false" text="Select Activation Function">
+                  <Menu fx:id="activationFunctionMenu" mnemonicParsing="false" text="Select Activation Function">
                     <items>
-                      <MenuItem fx:id="selectSigmoidItem" mnemonicParsing="false" onAction="#onSelectSigmoidItemClick" text="Sigmoid" />
-                        <MenuItem fx:id="selectReLUItem" mnemonicParsing="false" onAction="#onSelectReLUItemClick" text="Leaky ReLU" />
-                        <MenuItem fx:id="selectTanhItem" mnemonicParsing="false" onAction="#onSelectTanhItemClick" text="Hyperbolic Tangent" />
+                        <CheckMenuItem fx:id="selectSigmoidItem" mnemonicParsing="false" onAction="#onSelectSigmoidItemClick" text="Sigmoid" />
+                        <CheckMenuItem fx:id="selectReLUItem" mnemonicParsing="false" onAction="#onSelectReLUItemClick" text="Leaky ReLU" />
+                        <CheckMenuItem fx:id="selectTanhItem" mnemonicParsing="false" onAction="#onSelectTanhItemClick" text="Hyperbolic Tangent" />
                     </items>
                   </Menu>
             </items>
           </Menu>
         </menus>
       </MenuBar>
-      <Pane fx:id="neuralNetDisplayPane" prefWidth="620.0">
+      <Pane fx:id="neuralNetDisplayPane">
          <children>
             <HBox fx:id="neuralNetDisplayRow">
                <children>
@@ -51,16 +55,22 @@
                      </opaqueInsets>
                   </VBox>
                   <VBox fx:id="outputLayerColumn" alignment="CENTER" disable="true" prefWidth="150.0" spacing="20.0" />
-                  <VBox fx:id="statusBox" alignment="TOP_CENTER" spacing="10.0">
+                  <VBox fx:id="statusBox" alignment="CENTER_LEFT" spacing="10.0">
                      <children>
                         <Label fx:id="statusLabel" text="Status Summary" underline="true">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <Label fx:id="currentSSELabel" text="SSE: " />
-                        <Label fx:id="currentEpochLabel" text="Epoch:" />
-                        <Label fx:id="currentFileLabel" text="File: " wrapText="true" />
+                        <Label fx:id="learningRateLabel" text="Learning Rate: 0.2" />
+                        <Label fx:id="momentumLabel" text="Momentum Constant: 0.5" />
+                        <Label fx:id="maxSSELabel" text="Max SSE: 0.1" />
+                        <Label fx:id="epochsPerUpdateLabel" text="Epochs per Update: 10" />
+                        <Label fx:id="activationFunctionLabel" text="Activation Function: Sigmoid" />
+                        <Separator />
+                        <Label fx:id="currentEpochLabel" text="Epoch: 0" />
+                        <Label fx:id="maxEpochsLabel" text="Max Epochs: 100000" />
+                        <Label fx:id="currentSSELabel" text="SSE: N/A " />
                      </children>
                      <opaqueInsets>
                         <Insets />
@@ -68,6 +78,9 @@
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
                   </VBox>
                </children>
                <padding>

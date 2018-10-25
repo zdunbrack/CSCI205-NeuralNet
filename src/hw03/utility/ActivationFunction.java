@@ -18,16 +18,18 @@ package hw03.utility;
 
 /**
  * An interface representing an activation function that is applied to the net
- * input of a {@link Neuron} before passing it on to the next {@link Neuron}.
+ * input of a {@link hw03.model.Neuron} before passing it on to the next
+ * {@link hw03.model.Neuron}.
  *
  * @author Zach Dunbrack
  */
-public interface ActivationFunction {
+public interface ActivationFunction
+{
 
 	/**
 	 * Calculates the output of a neuron given the input value.
 	 *
-	 * @param netInput total input from previous {@link Layer}
+	 * @param netInput total input from previous {@link hw03.model.Layer}
 	 * @return the result of the activation function applied to the given input
 	 */
 	public double calcOutput(double netInput);
@@ -35,7 +37,7 @@ public interface ActivationFunction {
 	/**
 	 * Calculates the derivative for activation function.
 	 *
-	 * @param netInput total input from previous {@link Layer}
+	 * @param netInput total input from previous {@link hw03.model.Layer}
 	 * @return the derivative of the output function at the given input
 	 */
 	public double calcDerivOutput(double netInput);

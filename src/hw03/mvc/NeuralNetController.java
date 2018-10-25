@@ -15,8 +15,13 @@
  */
 package hw03.mvc;
 
-import hw03.model.LeakyReLUActivationFunction;
+import hw03.model.Edge;
+import hw03.model.Layer;
 import hw03.model.NeuralNet;
+import hw03.model.SimplerDoubleProperty;
+import hw03.model.SimplerIntegerProperty;
+import hw03.utility.ActivationFunction;
+import hw03.utility.LeakyReLUActivationFunction;
 import hw03.utility.SigmoidActivationFunction;
 import hw03.utility.TanhActivationFunction;
 import java.io.File;
@@ -26,9 +31,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Scanner;
+import javafx.beans.binding.Bindings;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -53,6 +61,10 @@ public class NeuralNetController
 	@FXML
 	private VBox rootBox;
 	@FXML
+	private MenuItem selectFileItem;
+	@FXML
+	private MenuItem saveNetworkItem;
+	@FXML
 	private MenuItem loadNetworkItem;
 	@FXML
 	private MenuItem exitItem;
@@ -67,11 +79,21 @@ public class NeuralNetController
 	@FXML
 	private Label statusLabel;
 	@FXML
-	private Label currentSSELabel;
+	private Label learningRateLabel;
+	@FXML
+	private Label momentumLabel;
+	@FXML
+	private Label maxSSELabel;
+	@FXML
+	private Label epochsPerUpdateLabel;
+	@FXML
+	private Label activationFunctionLabel;
 	@FXML
 	private Label currentEpochLabel;
 	@FXML
-	private Label currentFileLabel;
+	private Label maxEpochsLabel;
+	@FXML
+	private Label currentSSELabel;
 	@FXML
 	private Button singleStepButton;
 	@FXML
@@ -83,23 +105,25 @@ public class NeuralNetController
 	@FXML
 	private Button stopButton;
 	@FXML
-	private MenuItem selectFileItem;
-	@FXML
-	private MenuItem saveNetworkItem;
-	@FXML
 	private MenuItem setLearningRateItem;
 	@FXML
 	private MenuItem setMomentumItem;
+	@FXML
+	private MenuItem setMaxSSEItem;
 	@FXML
 	private MenuItem setMaxEpochsItem;
 	@FXML
 	private MenuItem setEpochsPerUpdateItem;
 	@FXML
-	private MenuItem selectSigmoidItem;
+	private CheckMenuItem selectSigmoidItem;
 	@FXML
-	private MenuItem selectReLUItem;
+	private CheckMenuItem selectReLUItem;
 	@FXML
-	private MenuItem selectTanhItem;
+	private CheckMenuItem selectTanhItem;
+	@FXML
+	private MenuItem configureANNItem;
+	@FXML
+	private Menu activationFunctionMenu;
 
 	private NeuralNet model;
 
@@ -107,23 +131,55 @@ public class NeuralNetController
 
 	private double[][] inputs;
 
+	private SimplerDoubleProperty learningRateProperty;
+
+	private SimplerIntegerProperty epochsPerUpdateProperty;
+
 	private static final double CIRCLE_RADIUS = 20;
 
+	private static final int DEFAULT_EPOCHS_PER_UPDATE = 10;
+
+	/**
+	 *
+	 */
 	@FXML
 	public void initialize()
 	{
-		assertNonNull();
+		learningRateProperty = new SimplerDoubleProperty(NeuralNet.DEFAULT_ALPHA);
+		epochsPerUpdateProperty = new SimplerIntegerProperty(
+				DEFAULT_EPOCHS_PER_UPDATE);
 	}
 
 	/**
 	 * Sets the model for the controller and initializes the display based on
 	 * the model.
 	 *
-	 * @param model the neural net being worked with
+	 * @param model the {@link hw03.model.NeuralNet} being worked with
+	 * @param actFunc the {@link hw03.utility.ActivationFunction} that the
+	 * neural net will use on non-input neurons
 	 */
-	public void setModel(NeuralNet model)
+	public void setModel(NeuralNet model, ActivationFunction actFunc)
 	{
 		this.model = model;
+		model.setActivationFunction(actFunc);
+		if (actFunc.toString().equals("Sigmoid"))
+		{
+			selectSigmoidItem.setSelected(true);
+			selectReLUItem.setSelected(false);
+			selectTanhItem.setSelected(false);
+		}
+		else if (actFunc.toString().equals("Leaky ReLU"))
+		{
+			selectSigmoidItem.setSelected(false);
+			selectReLUItem.setSelected(true);
+			selectTanhItem.setSelected(false);
+		}
+		else
+		{
+			selectSigmoidItem.setSelected(false);
+			selectReLUItem.setSelected(false);
+			selectTanhItem.setSelected(true);
+		}
 		initializeNeuralNetDisplay();
 	}
 
@@ -155,7 +211,6 @@ public class NeuralNetController
 			neuronRepresentation.fillProperty().set(Color.BLUE);
 			outputLayerColumn.getChildren().add(neuronRepresentation);
 		}
-		stage.sizeToScene();
 		for (int i = 0; i < hiddenLayerColumn.getChildren().size(); i++)
 		{
 			for (int j = 0; j < inputLayerColumn.getChildren().size(); j++)
@@ -196,6 +251,23 @@ public class NeuralNetController
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}
+		learningRateLabel.textProperty().bind(Bindings.concat("Learning Rate: ",
+															  learningRateProperty));
+		momentumLabel.textProperty().bind(
+				Bindings.concat("Momentum Constant: ",
+								Edge.getMomentumProperty()));
+		maxSSELabel.textProperty().bind(Bindings.concat("Max SSE: ",
+														model.getMaxErrorProperty()));
+		epochsPerUpdateLabel.textProperty().bind(Bindings.concat(
+				"Epochs per Update: ", epochsPerUpdateProperty));
+		activationFunctionLabel.setText(
+				"Activation Function: " + model.getActivationFunction().toString());
+		currentEpochLabel.textProperty().bind(Bindings.concat(
+				"Epoch: ", model.getEpochsProperty()));
+		maxEpochsLabel.textProperty().bind(Bindings.concat(
+				"Max Epochs: ", model.getMaxEpochsProperty()));
+		currentSSELabel.textProperty().bind(Bindings.concat("SSE: ",
+															model.getAvgSSEProperty()));
 		stage.sizeToScene();
 	}
 
@@ -293,17 +365,17 @@ public class NeuralNetController
 						"Neural Net Data File", "*.dat"));
 		File importFile = fileChooser.showOpenDialog(stage);
 		NeuralNet importedNet;
-		while(importFile != null)
+		while (importFile != null)
 		{
 			try
 			{
 				ObjectInputStream in = new ObjectInputStream(
 						new FileInputStream(
 								importFile));
-				importedNet = (NeuralNet)in.readObject();
-				setModel(importedNet);
+				importedNet = (NeuralNet) in.readObject();
+				setModel(importedNet, importedNet.getActivationFunction());
 				break;
-			} catch(IOException | ClassNotFoundException e)
+			} catch (IOException | ClassNotFoundException e)
 			{
 				importFile = fileChooser.showOpenDialog(stage);
 			}
@@ -313,7 +385,7 @@ public class NeuralNetController
 	@FXML
 	private void onExitItemClick()
 	{
-		System.exit(0);
+		stage.close();
 	}
 
 	@FXML
@@ -342,9 +414,15 @@ public class NeuralNetController
 	}
 
 	@FXML
+	private void onConfigureANNItemClick()
+	{
+		setModel(new NeuralNet(), new LeakyReLUActivationFunction());
+	}
+
+	@FXML
 	private void onSetLearningRateItemClick()
 	{
-		// set field
+		learningRateProperty.set(0.5);
 	}
 
 	@FXML
@@ -354,74 +432,69 @@ public class NeuralNetController
 	}
 
 	@FXML
+	private void onSetMaxSSEItemClick()
+	{
+		model.setMaxError(0);
+	}
+
+	@FXML
 	private void onSetMaxEpochsItemClick()
 	{
 		model.setMaxEpochs(0);
+		System.out.println(maxEpochsLabel.textProperty().get());
 	}
 
 	@FXML
 	private void onSetEpochsPerUpdateItemClick()
 	{
-		// set field
+		epochsPerUpdateProperty.set(0);
 	}
 
 	@FXML
 	private void onSelectSigmoidItemClick()
 	{
-		resetNeuralNet();
-		model.setActivationFunction(new SigmoidActivationFunction());
+		if (selectSigmoidItem.isSelected())
+		{
+			resetNeuralNet(new SigmoidActivationFunction());
+		}
+		selectSigmoidItem.setSelected(true);
+		selectReLUItem.setSelected(false);
+		selectTanhItem.setSelected(false);
 	}
 
 	@FXML
 	private void onSelectReLUItemClick()
 	{
-		resetNeuralNet();
-		model.setActivationFunction(new LeakyReLUActivationFunction());
+		if (selectReLUItem.isSelected())
+		{
+			resetNeuralNet(new LeakyReLUActivationFunction());
+		}
+		selectSigmoidItem.setSelected(false);
+		selectReLUItem.setSelected(true);
+		selectTanhItem.setSelected(false);
 	}
 
 	@FXML
 	private void onSelectTanhItemClick()
 	{
-		resetNeuralNet();
-		model.setActivationFunction(new TanhActivationFunction());
+		if (selectTanhItem.isSelected())
+		{
+			resetNeuralNet(new TanhActivationFunction());
+		}
+		selectSigmoidItem.setSelected(false);
+		selectReLUItem.setSelected(false);
+		selectTanhItem.setSelected(true);
 	}
 
-	private void resetNeuralNet()
+	private void resetNeuralNet(ActivationFunction actFunc)
 	{
-		setModel(new NeuralNet(model.getResetLayers(), null));
+		setModel(new NeuralNet(model.getResetLayers(), null), actFunc);
 	}
 
-	private void assertNonNull()
-	{
-		assert rootBox != null : "fx:id=\"rootBox\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert neuralNetDisplayRow != null : "fx:id=\"neuralNetDisplayRow\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert neuralNetDisplayPane != null : "fx:id=\"neuralNetDisplayPane\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert loadNetworkItem != null : "fx:id=\"loadNetworkItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert exitItem != null : "fx:id=\"exitItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert inputLayerColumn != null : "fx:id=\"inputLayerColumn\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert hiddenLayerColumn != null : "fx:id=\"hiddenLayerColumn\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert outputLayerColumn != null : "fx:id=\"outputLayerColumn\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert statusBox != null : "fx:id=\"statusBox\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert statusLabel != null : "fx:id=\"statusLabel\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert currentSSELabel != null : "fx:id=\"currentSSELabel\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert currentEpochLabel != null : "fx:id=\"currentEpochLabel\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert currentFileLabel != null : "fx:id=\"currentFileLabel\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert singleStepButton != null : "fx:id=\"singleStepButton\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert singleEpochButton != null : "fx:id=\"singleEpochButton\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert classifyButton != null : "fx:id=\"classifyButton\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert learnButton != null : "fx:id=\"learnButton\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert stopButton != null : "fx:id=\"stopButton\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert selectFileItem != null : "fx:id=\"selectFileItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert saveNetworkItem != null : "fx:id=\"saveNetworkItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert setLearningRateItem != null : "fx:id=\"setLearningRateItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert setMomentumItem != null : "fx:id=\"setMomentumItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert setMaxEpochsItem != null : "fx:id=\"setMaxEpochsItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert setEpochsPerUpdateItem != null : "fx:id=\"setEpochsPerUpdateItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert selectSigmoidItem != null : "fx:id=\"selectSigmoidItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert selectReLUItem != null : "fx:id=\"selectReLUItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-		assert selectTanhItem != null : "fx:id=\"selectTanhItem\" was not injected: check your FXML file 'NeuralNetView.fxml'.";
-	}
-
+	/**
+	 *
+	 * @param stage
+	 */
 	public void setStage(Stage stage)
 	{
 		this.stage = stage;

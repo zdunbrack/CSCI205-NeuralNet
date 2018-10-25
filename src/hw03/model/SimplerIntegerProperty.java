@@ -3,12 +3,12 @@
 * Fall 2018
 *
 * Name: Josh Dunbrack, Zach Dunbrack
-* Date: Oct 23, 2018
-* Time: 9:53:49 PM
+* Date: Oct 24, 2018
+* Time: 9:24:37 PM
 *
 * Project: csci205_hw03
 * Package: hw03.model
-* File: SimplerDoubleProperty
+* File: SimplerIntegerProperty
 * Description:
 *
 * ****************************************
@@ -16,30 +16,30 @@
 package hw03.model;
 
 import java.io.Serializable;
-import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  *
  * @author zachd
  */
-public class SimplerDoubleProperty extends SimpleDoubleProperty implements
+public class SimplerIntegerProperty extends SimpleIntegerProperty implements
 		Serializable
 {
 
 	/**
 	 *
 	 */
-	public SimplerDoubleProperty()
+	public SimplerIntegerProperty()
 	{
-		super();
 	}
 
 	/**
 	 *
 	 * @param value
 	 */
-	public SimplerDoubleProperty(double value)
+	public SimplerIntegerProperty(int value)
 	{
 		super(value);
 	}
+
 }

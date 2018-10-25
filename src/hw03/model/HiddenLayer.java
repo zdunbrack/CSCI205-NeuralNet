@@ -28,29 +28,36 @@ import java.util.ArrayList;
  *
  * @author cld028
  */
-public class HiddenLayer extends Layer {
+public class HiddenLayer extends Layer
+{
 
 	// A list of the weighted sums of the error gradients from the previous layer.
 	private double[] outputErrors;
 
-	HiddenLayer(int numNeurons) {
+	HiddenLayer(int numNeurons)
+	{
 		super(numNeurons);
 		outputErrors = new double[neurons.size()];
 	}
 
 	@Override
-	public ArrayList<Neuron> createNeurons(int numNeurons) {
+	public ArrayList<Neuron> createNeurons(int numNeurons)
+	{
 		ArrayList<Neuron> neurons = new ArrayList();
-		for (int i = 0; i < numNeurons; i++) {
+		for (int i = 0; i < numNeurons; i++)
+		{
 			neurons.add(new Neuron());
 		}
 		return neurons;
 	}
 
 	@Override
-	public void connectLayer(Layer nextLayer, WeightAssignment weightAssignment) {
-		for (Neuron n : neurons) {
-			for (Neuron n2 : nextLayer.getNeurons()) {
+	public void connectLayer(Layer nextLayer, WeightAssignment weightAssignment)
+	{
+		for (Neuron n : neurons)
+		{
+			for (Neuron n2 : nextLayer.getNeurons())
+			{
 				Edge e = new Edge(n, weightAssignment.assignWeight());
 				n.addEdgeOut(e);
 				n2.addEdgeIn(e);
@@ -59,25 +66,31 @@ public class HiddenLayer extends Layer {
 	}
 
 	@Override
-	public void learn(double alpha) {
+	public void learn(double alpha)
+	{
 		calculateErrors();
-		for (int i = 0; i < neurons.size(); i++) {
-			for (Edge e : neurons.get(i).getInEdges()) {
+		for (int i = 0; i < neurons.size(); i++)
+		{
+			for (Edge e : neurons.get(i).getInEdges())
+			{
 				e.setErrorGradient(
-					neurons.get(i).getDerivResult() * outputErrors[i]);
+						neurons.get(i).getDerivResult() * outputErrors[i]);
 				e.update(alpha);
 			}
 			neurons.get(i).updateTheta(
-				neurons.get(i).getDerivResult() * outputErrors[i],
-				alpha);
+					neurons.get(i).getDerivResult() * outputErrors[i],
+					alpha);
 		}
 	}
 
 	// Fills in the outputErrors array with the weighted sums of the error gradients from the next layer.
-	private void calculateErrors() {
-		for (int i = 0; i < neurons.size(); i++) {
+	private void calculateErrors()
+	{
+		for (int i = 0; i < neurons.size(); i++)
+		{
 			outputErrors[i] = 0;
-			for (Edge e : neurons.get(i).getOutEdges()) {
+			for (Edge e : neurons.get(i).getOutEdges())
+			{
 				outputErrors[i] += e.getWeightedErrorGradient();
 			}
 		}

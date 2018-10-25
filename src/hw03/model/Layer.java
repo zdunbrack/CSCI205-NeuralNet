@@ -87,6 +87,10 @@ public abstract class Layer implements Serializable
 	public abstract void connectLayer(Layer nextLayer,
 									  WeightAssignment weightAssignment);
 
+	/**
+	 *
+	 * @return
+	 */
 	public ArrayList<Neuron> getNeurons()
 	{
 		return neurons;

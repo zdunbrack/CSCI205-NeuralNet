@@ -38,7 +38,8 @@ public class Edge implements Serializable
 	// The neuron sending data to this edge.
 	private Neuron from;
 	// The constant that decides how aggressively the edge tries to avoid local minima
-	private static double momentumConstant = 0.5;
+	private static SimplerDoubleProperty momentumConstant = new SimplerDoubleProperty(
+			0.5);
 
 	Edge(Neuron from)
 	{
@@ -88,7 +89,7 @@ public class Edge implements Serializable
 	{
 		double prevWeightDelta = this.weight - this.prevWeight;
 		this.prevWeight = this.weight;
-		this.weight += alpha * from.getResult() * errorGradient + momentumConstant * prevWeightDelta;
+		this.weight += alpha * from.getResult() * errorGradient + momentumConstant.get() * prevWeightDelta;
 	}
 
 	/**
@@ -132,13 +133,30 @@ public class Edge implements Serializable
 		this.weight = weight;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public static double getMomentumConstant()
 	{
-		return momentumConstant;
+		return momentumConstant.get();
 	}
 
+	/**
+	 *
+	 * @param momentumConstant
+	 */
 	public static void setMomentumConstant(double momentumConstant)
 	{
-		Edge.momentumConstant = momentumConstant;
+		Edge.momentumConstant.set(momentumConstant);
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public static SimplerDoubleProperty getMomentumProperty()
+	{
+		return momentumConstant;
 	}
 }

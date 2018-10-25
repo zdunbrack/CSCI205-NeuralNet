@@ -43,6 +43,6 @@ public class TanhActivationFunction implements ActivationFunction, Serializable
 
 	public String toString()
 	{
-		return "Tanh";
+		return "Hyperbolic Tangent";
 	}
 }

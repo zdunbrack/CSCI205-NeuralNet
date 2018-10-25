@@ -40,19 +40,19 @@ public class NeuralNet implements Serializable
 	// The singular output layer in the neural net.
 	private OutputLayer outputLayer;
 	// The maximum sum of squares error at which the machine will stop learning.
-	private double maxError = 0.1;
+	private SimplerDoubleProperty maxError = new SimplerDoubleProperty(0.1);
 	// The maximum number of runs for which the neural network should learn.
-	private int maxEpochs = 5000;
+	private SimplerIntegerProperty maxEpochs = new SimplerIntegerProperty(10000);
 	// The average SSE upon termination of learning over the given data.
-	private double avgSSE;
+	private SimplerDoubleProperty avgSSE = new SimplerDoubleProperty(0);
 	// The amount of time spent learning on the given data.
-	private double secondsToTrain;
+	private SimplerDoubleProperty secondsToTrain = new SimplerDoubleProperty(0);
 	// The number of epochs that the neural net has taken to learn on the given data.
-	private int epochs;
+	private SimplerIntegerProperty epochs = new SimplerIntegerProperty(0);
 	/**
 	 * The default learning rate for the neural net.
 	 */
-	protected static double DEFAULT_ALPHA = 0.2;
+	public static double DEFAULT_ALPHA = 0.2;
 
 	/**
 	 * The default method of assigning weights to all {@link Edge} objects in
@@ -92,35 +92,36 @@ public class NeuralNet implements Serializable
 	 * @param layers the layers involved in the neural net
 	 * @param weightAssignment the method of assigning weights; between -0.5 and
 	 * 0.5 randomly distributed if null
-	 * @throws NeuralNetConstructionException
+	 * @throws NeuralNetConstructionException if the neural net is given
+	 * nonsensical inputs for construction
 	 */
 	public NeuralNet(List<Layer> layers, WeightAssignment weightAssignment)
 	{
-		if(weightAssignment == null)
+		if (weightAssignment == null)
 		{
 			weightAssignment = DEFAULT_WEIGHT_ASSIGNMENT;
 		}
 		this.weightAssignment = weightAssignment;
-		if(layers.size() < 2 || !(layers.get(0) instanceof InputLayer) || !(layers.get(
-																			layers.size() - 1) instanceof OutputLayer))
+		if (layers.size() < 2 || !(layers.get(0) instanceof InputLayer) || !(layers.get(
+																			 layers.size() - 1) instanceof OutputLayer))
 		{
 			throw new NeuralNetConstructionException(
 					"Input and output layers were not appropriately provided.");
 		}
-		this.inputLayer = (InputLayer)layers.get(0);
+		this.inputLayer = (InputLayer) layers.get(0);
 		this.hiddenLayers = new HiddenLayer[layers.size() - 2];
-		this.outputLayer = (OutputLayer)layers.get(layers.size() - 1);
-		for(int i = 1; i < layers.size() - 1; i++)
+		this.outputLayer = (OutputLayer) layers.get(layers.size() - 1);
+		for (int i = 1; i < layers.size() - 1; i++)
 		{
-			if(!(layers.get(i) instanceof HiddenLayer))
+			if (!(layers.get(i) instanceof HiddenLayer))
 			{
 				throw new NeuralNetConstructionException(
 						"Intermediate layer was not constructed as hidden layer.");
 			}
-			hiddenLayers[i - 1] = (HiddenLayer)layers.get(i);
+			hiddenLayers[i - 1] = (HiddenLayer) layers.get(i);
 		}
 		Layer[] layerArray = new Layer[layers.size()];
-		for(int i = 0; i < layerArray.length; i++)
+		for (int i = 0; i < layerArray.length; i++)
 		{
 			layerArray[i] = layers.get(i);
 		}
@@ -139,7 +140,7 @@ public class NeuralNet implements Serializable
 	public double[] classify(double[] data)
 	{
 		inputLayer.fireNeurons(data);
-		for(HiddenLayer layer : hiddenLayers)
+		for (HiddenLayer layer : hiddenLayers)
 		{
 			layer.fireNeurons();
 		}
@@ -162,20 +163,20 @@ public class NeuralNet implements Serializable
 	{
 		Layer[] layers = new Layer[1 + hiddenLayers.length];
 		layers[0] = inputLayer;
-		for(int i = 1; i < layers.length; i++)
+		for (int i = 1; i < layers.length; i++)
 		{
 			layers[i] = hiddenLayers[i - 1];
 		}
 		double[][][] weights = new double[layers.length][][];
-		for(int i = 0; i < layers.length; i++)
+		for (int i = 0; i < layers.length; i++)
 		{
 			ArrayList<Neuron> neurons = layers[i].getNeurons();
 			weights[i] = new double[neurons.size()][];
-			for(int j = 0; j < neurons.size(); j++)
+			for (int j = 0; j < neurons.size(); j++)
 			{
 				ArrayList<Edge> edges = neurons.get(j).getOutEdges();
 				weights[i][j] = new double[edges.size()];
-				for(int k = 0; k < edges.size(); k++)
+				for (int k = 0; k < edges.size(); k++)
 				{
 					Edge e = edges.get(k);
 					weights[i][j][k] = e.getWeight();
@@ -200,20 +201,20 @@ public class NeuralNet implements Serializable
 	{
 		double[][] thetas = new double[2 + hiddenLayers.length][];
 		thetas[0] = new double[inputLayer.getNeurons().size()];
-		for(int i = 0; i < inputLayer.getNeurons().size(); i++)
+		for (int i = 0; i < inputLayer.getNeurons().size(); i++)
 		{
 			thetas[0][i] = inputLayer.getNeurons().get(i).getTheta();
 		}
-		for(int i = 1; i < thetas.length - 1; i++)
+		for (int i = 1; i < thetas.length - 1; i++)
 		{
 			thetas[i] = new double[hiddenLayers[i - 1].getNeurons().size()];
-			for(int j = 0; j < hiddenLayers[i - 1].getNeurons().size(); j++)
+			for (int j = 0; j < hiddenLayers[i - 1].getNeurons().size(); j++)
 			{
 				thetas[i][j] = hiddenLayers[i - 1].getNeurons().get(j).getTheta();
 			}
 		}
 		thetas[thetas.length - 1] = new double[outputLayer.getNeurons().size()];
-		for(int i = 0; i < outputLayer.getNeurons().size(); i++)
+		for (int i = 0; i < outputLayer.getNeurons().size(); i++)
 		{
 			thetas[thetas.length - 1][i] = outputLayer.getNeurons().get(i).getTheta();
 		}
@@ -253,11 +254,11 @@ public class NeuralNet implements Serializable
 	public void learn(double[][] learningData, double alpha)
 	{
 		long startTime = System.nanoTime();
-		epochs = 0;
+		epochs.set(0);
 		do
 		{
-			avgSSE = 0;
-			for(double[] inputRow : learningData)
+			avgSSE.set(0);
+			for (double[] inputRow : learningData)
 			{
 				double localError = 0;
 				double[] inputSet = Arrays.copyOfRange(inputRow, 0,
@@ -266,29 +267,29 @@ public class NeuralNet implements Serializable
 															  inputRow.length - outputLayer.getNeurons().size(),
 															  inputRow.length);
 				double[] outputSet = classify(inputSet);
-				for(int i = 0; i < outputSet.length; i++)
+				for (int i = 0; i < outputSet.length; i++)
 				{
 					localError += Math.pow((expectedOutputs[i] - outputSet[i]),
 										   2);
 				}
 				outputLayer.setTargetOutput(expectedOutputs);
 				outputLayer.learn(alpha);
-				for(int i = hiddenLayers.length - 1; i >= 0; i--)
+				for (int i = hiddenLayers.length - 1; i >= 0; i--)
 				{
 					hiddenLayers[i].learn(alpha);
 				}
-				avgSSE += localError;
+				avgSSE.set(avgSSE.get() + localError);
 			}
-			epochs++;
-			avgSSE /= learningData.length; // Average square error across all data sets
-		} while(avgSSE > maxError && epochs < maxEpochs);
-		secondsToTrain = (System.nanoTime() - startTime) / 1.0E9;
+			epochs.set(epochs.get() + 1);
+			avgSSE.set(avgSSE.get() / learningData.length); // Average square error across all data sets
+			secondsToTrain.set((System.nanoTime() - startTime) / 1.0E9);
+		} while (avgSSE.get() > maxError.get() && epochs.get() < maxEpochs.get());
 	}
 
 	// Creates edges linking each of the consecutive layers.
 	private void connectLayers(Layer[] layers)
 	{
-		for(int i = 0; i < layers.length - 1; i++)
+		for (int i = 0; i < layers.length - 1; i++)
 		{
 			layers[i].connectLayer(layers[i + 1], weightAssignment);
 		}
@@ -308,7 +309,7 @@ public class NeuralNet implements Serializable
 		Layer[] layers = new Layer[2 + hiddenLayers.length];
 		layers[0] = inputLayer;
 		layers[layers.length - 1] = outputLayer;
-		for(int i = 1; i < layers.length - 1; i++)
+		for (int i = 1; i < layers.length - 1; i++)
 		{
 			layers[i] = hiddenLayers[i - 1];
 		}
@@ -324,7 +325,17 @@ public class NeuralNet implements Serializable
 	 */
 	public double getAvgSSE()
 	{
-		return avgSSE;
+		return avgSSE.get();
+	}
+
+	/**
+	 * Returns the maximum error that the neural net will accept.
+	 *
+	 * @return the maximum error that the neural net will accept.
+	 */
+	public double getMaxError()
+	{
+		return maxError.get();
 	}
 
 	/**
@@ -334,7 +345,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getSecondsToTrain()
 	{
-		return secondsToTrain;
+		return secondsToTrain.get();
 	}
 
 	/**
@@ -344,7 +355,7 @@ public class NeuralNet implements Serializable
 	 */
 	public int getEpochs()
 	{
-		return epochs;
+		return epochs.get();
 	}
 
 	/**
@@ -354,7 +365,8 @@ public class NeuralNet implements Serializable
 	 */
 	public int getMaxEpochs()
 	{
-		return maxEpochs;
+		System.out.println(maxEpochs.get());
+		return maxEpochs.get();
 	}
 
 	/**
@@ -375,11 +387,11 @@ public class NeuralNet implements Serializable
 	 */
 	public void setActivationFunction(ActivationFunction actFunc)
 	{
-		for(Layer layer : getLayers())
+		for (Layer layer : getLayers())
 		{
-			if(!(layer instanceof InputLayer))
+			if (!(layer instanceof InputLayer))
 			{
-				for(Neuron n : layer.getNeurons())
+				for (Neuron n : layer.getNeurons())
 				{
 					n.setActivationFunction(actFunc);
 				}
@@ -396,7 +408,7 @@ public class NeuralNet implements Serializable
 	 */
 	public void setMaxError(double maxError)
 	{
-		this.maxError = maxError;
+		this.maxError.set(maxError);
 	}
 
 	/**
@@ -412,25 +424,84 @@ public class NeuralNet implements Serializable
 		this.weightAssignment = weightAssignment;
 	}
 
+	/**
+	 *
+	 * @param maxEpochs
+	 */
 	public void setMaxEpochs(int maxEpochs)
 	{
-		this.maxEpochs = maxEpochs;
+		this.maxEpochs.set(maxEpochs);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public ArrayList<Layer> getResetLayers()
 	{
 		ArrayList<Layer> resetLayers = new ArrayList<>();
 		resetLayers.add(new InputLayer(inputLayer.getNeurons().size()));
-		for(int i = 1; i < hiddenLayers.length + 1; i++)
+		for (int i = 0; i < hiddenLayers.length; i++)
 		{
-			resetLayers.add(new HiddenLayer(inputLayer.getNeurons().size()));
+			resetLayers.add(new HiddenLayer(
+					hiddenLayers[i].getNeurons().size()));
 		}
 		resetLayers.add(new OutputLayer(outputLayer.getNeurons().size()));
 		return resetLayers;
 	}
 
+	/**
+	 *
+	 * @param momentumConstant
+	 */
 	public void setMomentumConstant(int momentumConstant)
 	{
 		Edge.setMomentumConstant(momentumConstant);
 	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimplerDoubleProperty getMaxErrorProperty()
+	{
+		return maxError;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimplerIntegerProperty getMaxEpochsProperty()
+	{
+		return maxEpochs;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimplerDoubleProperty getAvgSSEProperty()
+	{
+		return avgSSE;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimplerDoubleProperty getSecondsToTrainProperty()
+	{
+		return secondsToTrain;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimplerIntegerProperty getEpochsProperty()
+	{
+		return epochs;
+	}
+
 }

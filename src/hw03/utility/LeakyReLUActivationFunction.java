@@ -16,9 +16,8 @@
  * Updated by Josh and Zach Dunbrack in October 2018.
  * ****************************************
  */
-package hw03.model;
+package hw03.utility;
 
-import hw03.utility.ActivationFunction;
 import java.io.Serializable;
 
 /**

@@ -212,6 +212,10 @@ public class Neuron implements Serializable
 		this.activationFunction = actFunc;
 	}
 
+	/**
+	 *
+	 * @return
+	 */
 	public SimplerDoubleProperty getThetaProperty()
 	{
 		return thetaProperty;

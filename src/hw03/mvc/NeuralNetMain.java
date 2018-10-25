@@ -16,6 +16,7 @@
 package hw03.mvc;
 
 import hw03.model.NeuralNet;
+import hw03.utility.SigmoidActivationFunction;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -43,18 +44,19 @@ public class NeuralNetMain extends Application
 	public void start(Stage primaryStage) throws Exception
 	{
 		FXMLLoader loader = new FXMLLoader(
-				this.getClass().getResource(
+				this.getClass().getClassLoader().getResource(
 						"hw03/mvc/NeuralNetView.fxml"));
 
-		Parent root = (Parent)loader.load();
+		Parent root = (Parent) loader.load();
 
 		controller = loader.getController();
 		Scene scene = new Scene(root);
 		primaryStage.setOnShown((WindowEvent event) ->
 		{
 			controller.setStage(primaryStage);
-			controller.setModel(model);
+			controller.setModel(model, new SigmoidActivationFunction());
 		});
+		primaryStage.setResizable(false);
 		primaryStage.setTitle("Neural Net GUI");
 		primaryStage.setScene(scene);
 		primaryStage.show();
