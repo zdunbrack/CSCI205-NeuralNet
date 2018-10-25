@@ -18,8 +18,8 @@
  */
 package hw03.model;
 
-import hw03.utility.SimplerDoubleProperty;
 import java.io.Serializable;
+import javafx.beans.property.SimpleDoubleProperty;
 
 /**
  * A struct-like class linking {@link Neuron} objects that reside in different
@@ -39,16 +39,17 @@ public class Edge implements Serializable
 	// The neuron sending data to this edge.
 	private Neuron from;
 	// The constant that decides how aggressively the edge tries to avoid local minima.
-	private static SimplerDoubleProperty momentumConstant = new SimplerDoubleProperty(
+	private static double momentumConstant = 0.5;
+	private transient static SimpleDoubleProperty momentumConstantProperty = new SimpleDoubleProperty(
 			0.5);
 	// The property associated with the edge's weight
-	private SimplerDoubleProperty weightProperty;
+	private transient SimpleDoubleProperty weightProperty;
 
 	Edge(Neuron from)
 	{
 		this.prevWeight = 0;
 		this.weight = 0;
-		this.weightProperty = new SimplerDoubleProperty();
+		this.weightProperty = new SimpleDoubleProperty(weight);
 		this.from = from;
 	}
 
@@ -56,7 +57,7 @@ public class Edge implements Serializable
 	{
 		this.prevWeight = weight;
 		this.weight = weight;
-		this.weightProperty = new SimplerDoubleProperty(weight);
+		this.weightProperty = new SimpleDoubleProperty(this.weight);
 		this.from = from;
 	}
 
@@ -92,9 +93,9 @@ public class Edge implements Serializable
 	 */
 	public void update(double alpha)
 	{
-		double prevWeightDelta = this.weightProperty.get() - this.prevWeight;
-		this.prevWeight = this.weightProperty.get();
-		this.weight += alpha * from.getResult() * errorGradient + momentumConstant.get() * prevWeightDelta;
+		double prevWeightDelta = weight - this.prevWeight;
+		this.prevWeight = weight;
+		this.weight += alpha * from.getResult() * errorGradient + momentumConstant * prevWeightDelta;
 		this.weightProperty.set(weight);
 	}
 
@@ -146,33 +147,44 @@ public class Edge implements Serializable
 	 */
 	public static double getMomentumConstant()
 	{
-		return momentumConstant.get();
-	}
-
-	/**
-	 *
-	 * @param momentumConstant
-	 */
-	public static void setMomentumConstant(double momentumConstant)
-	{
-		Edge.momentumConstant.set(momentumConstant);
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	public static SimplerDoubleProperty getMomentumProperty()
-	{
 		return momentumConstant;
 	}
 
 	/**
 	 *
+	 * @param newMomentumConstant
+	 */
+	public static void setMomentumConstant(double newMomentumConstant)
+	{
+		momentumConstant = newMomentumConstant;
+		Edge.momentumConstantProperty.set(momentumConstant);
+	}
+
+	/**
+	 *
 	 * @return
 	 */
-	public SimplerDoubleProperty getWeightProperty()
+	public static SimpleDoubleProperty getMomentumProperty()
+	{
+		return momentumConstantProperty;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimpleDoubleProperty getWeightProperty()
 	{
 		return weightProperty;
+	}
+
+	/**
+	 * Restores the values stored in the non-Property fields to the associated
+	 * Properties for this object.
+	 */
+	public void repair()
+	{
+		momentumConstantProperty = new SimpleDoubleProperty(momentumConstant);
+		weightProperty = new SimpleDoubleProperty(weight);
 	}
 }

@@ -61,7 +61,7 @@ public abstract class Layer implements Serializable
 	 */
 	public void fireNeurons()
 	{
-		for(Neuron n : neurons)
+		for (Neuron n : neurons)
 		{
 			n.fire();
 		}
@@ -94,5 +94,17 @@ public abstract class Layer implements Serializable
 	public ArrayList<Neuron> getNeurons()
 	{
 		return neurons;
+	}
+
+	/**
+	 * Restores the values stored in the non-Property fields to the associated
+	 * Properties for this object and its children.
+	 */
+	public void repair()
+	{
+		for (Neuron neuron : getNeurons())
+		{
+			neuron.repair();
+		}
 	}
 }

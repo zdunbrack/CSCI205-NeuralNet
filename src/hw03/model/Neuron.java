@@ -17,11 +17,11 @@
  */
 package hw03.model;
 
-import hw03.utility.SimplerDoubleProperty;
 import hw03.utility.ActivationFunction;
 import hw03.utility.SigmoidActivationFunction;
 import java.io.Serializable;
 import java.util.ArrayList;
+import javafx.beans.property.SimpleDoubleProperty;
 
 /**
  * A class representing a neuron or node in a {@link NeuralNet}. This class
@@ -45,9 +45,9 @@ public class Neuron implements Serializable
 	// The threshold value subtracted from netInput before passing it into the activation function.
 	private double theta;
 	// A property representing the threshold value of the neuron.
-	private SimplerDoubleProperty thetaProperty;
+	private transient SimpleDoubleProperty thetaProperty;
 	// A property representing the neuron's current output.
-	private SimplerDoubleProperty result;
+	private transient SimpleDoubleProperty result;
 	// The default threshold for the neuron.
 	private final static double DEFAULT_THETA = -0.5;
 	// The default activation function for the neuron.
@@ -56,8 +56,8 @@ public class Neuron implements Serializable
 	Neuron()
 	{
 		this.theta = DEFAULT_THETA;
-		this.thetaProperty = new SimplerDoubleProperty(theta);
-		this.result = new SimplerDoubleProperty();
+		this.thetaProperty = new SimpleDoubleProperty(theta);
+		this.result = new SimpleDoubleProperty();
 		this.activationFunction = DEFAULT__ACTIVATION_FUNCTION;
 	}
 
@@ -217,9 +217,22 @@ public class Neuron implements Serializable
 	 *
 	 * @return
 	 */
-	public SimplerDoubleProperty getThetaProperty()
+	public SimpleDoubleProperty getThetaProperty()
 	{
 		return thetaProperty;
 	}
 
+	/**
+	 * Restores the values stored in the non-Property fields to the associated
+	 * Properties for this object and its children.
+	 */
+	public void repair()
+	{
+		this.thetaProperty = new SimpleDoubleProperty(theta);
+		this.result = new SimpleDoubleProperty(getResult());
+		for (Edge e : getOutEdges())
+		{
+			e.repair();
+		}
+	}
 }

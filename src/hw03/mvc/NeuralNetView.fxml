@@ -27,7 +27,13 @@
           </Menu>
           <Menu mnemonicParsing="false" text="ANN Options">
             <items>
-                  <MenuItem fx:id="configureANNItem" mnemonicParsing="false" onAction="#onConfigureANNItemClick" text="Configure ANN" />
+                  <Menu mnemonicParsing="false" text="Configure ANN">
+                    <items>
+                      <MenuItem fx:id="setNumInputNeuronsItem" mnemonicParsing="false" onAction="#onSetNumInputNeuronsItemClick" text="Configure Input Layer" />
+                        <MenuItem fx:id="setNumHiddenNeuronsItem" mnemonicParsing="false" onAction="#onSetNumHiddenNeuronsItemClick" text="Configure Hidden Layer" />
+                        <MenuItem fx:id="setNumOutputNeuronsItem" mnemonicParsing="false" onAction="#onSetNumOutputNeuronsItemClick" text="Configure Output Layer" />
+                    </items>
+                  </Menu>
               <MenuItem fx:id="setLearningRateItem" mnemonicParsing="false" onAction="#onSetLearningRateItemClick" text="Set Learning Rate" />
                   <MenuItem fx:id="setMomentumItem" mnemonicParsing="false" onAction="#onSetMomentumItemClick" text="Set Momentum Constant" />
                   <MenuItem fx:id="setMaxSSEItem" mnemonicParsing="false" onAction="#onSetMaxSSEItemClick" text="Set Maximum Acceptable SSE" />

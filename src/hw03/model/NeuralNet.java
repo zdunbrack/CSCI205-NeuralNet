@@ -19,12 +19,12 @@
 package hw03.model;
 
 import hw03.utility.ActivationFunction;
-import hw03.utility.SimplerDoubleProperty;
-import hw03.utility.SimplerIntegerProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 
 /**
  * A collection of {@link Layer} objects that represents a neural net capable of
@@ -42,15 +42,30 @@ public class NeuralNet implements Serializable
 	// The singular output layer in the neural net.
 	private OutputLayer outputLayer;
 	// The maximum sum of squares error at which the machine will stop learning.
-	private SimplerDoubleProperty maxError = new SimplerDoubleProperty(0.1);
+	private double maxError = 0.1;
 	// The maximum number of runs for which the neural network should learn.
-	private SimplerIntegerProperty maxEpochs = new SimplerIntegerProperty(10000);
+	private int maxEpochs = 10000;
 	// The average SSE upon termination of learning over the given data.
-	private SimplerDoubleProperty avgSSE = new SimplerDoubleProperty(0);
+	private double avgSSE = 0;
 	// The amount of time spent learning on the given data.
-	private SimplerDoubleProperty secondsToTrain = new SimplerDoubleProperty(0);
+	private double secondsToTrain = 0;
 	// The number of epochs that the neural net has taken to learn on the given data.
-	private SimplerIntegerProperty epochs = new SimplerIntegerProperty(0);
+	private int epochs = 0;
+	// The maximum sum of squares error at which the machine will stop learning.
+	private transient SimpleDoubleProperty maxErrorProperty = new SimpleDoubleProperty(
+			0.1);
+	// The maximum number of runs for which the neural network should learn.
+	private transient SimpleIntegerProperty maxEpochsProperty = new SimpleIntegerProperty(
+			10000);
+	// The average SSE upon termination of learning over the given data.
+	private transient SimpleDoubleProperty avgSSEProperty = new SimpleDoubleProperty(
+			0);
+	// The amount of time spent learning on the given data.
+	private transient SimpleDoubleProperty secondsToTrainProperty = new SimpleDoubleProperty(
+			0);
+	// The number of epochs that the neural net has taken to learn on the given data.
+	private transient SimpleIntegerProperty epochsProperty = new SimpleIntegerProperty(
+			0);
 	/**
 	 * The default learning rate for the neural net.
 	 */
@@ -87,6 +102,50 @@ public class NeuralNet implements Serializable
 	}
 
 	/**
+	 * Generates a neural net with {@link Layer} objects contructed from the
+	 * given {@code numNeurons} array, assigning initial weights to the
+	 * {@link Edge} objects as dictated in {@code weightAssignment}.
+	 *
+	 * @param numNeurons the number of {@link Neuron} objects involved in each
+	 * layer of the neural net
+	 * @param weightAssignment the method of assigning weights; between -0.5 and
+	 * 0.5 randomly distributed if null
+	 * @throws NeuralNetConstructionException if there are any elements of
+	 * {@code numNeurons} that are at most 0
+	 */
+	public NeuralNet(int[] numNeurons, WeightAssignment weightAssignment)
+	{
+		if (weightAssignment == null)
+		{
+			weightAssignment = DEFAULT_WEIGHT_ASSIGNMENT;
+		}
+		this.weightAssignment = weightAssignment;
+		Layer[] layers = new Layer[numNeurons.length];
+		if (numNeurons.length < 2)
+		{
+			throw new NeuralNetConstructionException(
+					"Cannot construct a neural net with fewer than 2 layers.");
+		}
+		this.inputLayer = new InputLayer(numNeurons[0]);
+		layers[0] = this.inputLayer;
+		hiddenLayers = new HiddenLayer[layers.length - 2];
+		for (int i = 1; i < numNeurons.length - 1; i++)
+		{
+			if (numNeurons[i] <= 0)
+			{
+				throw new NeuralNetConstructionException(
+						"Cannot construct neural net with 0 or fewer neurons.");
+			}
+			hiddenLayers[i - 1] = new HiddenLayer(numNeurons[i]);
+			layers[i] = hiddenLayers[i - 1];
+		}
+		this.outputLayer = new OutputLayer(
+				numNeurons[numNeurons.length - 1]);
+		layers[layers.length - 1] = this.outputLayer;
+		connectLayers(layers);
+	}
+
+	/**
 	 * Generates a neural net with the given {@link Layer} objects, assigning
 	 * initial weights to the {@link Edge} objects as dictated in
 	 * {@code weightAssignment}.
@@ -108,7 +167,7 @@ public class NeuralNet implements Serializable
 																			 layers.size() - 1) instanceof OutputLayer))
 		{
 			throw new NeuralNetConstructionException(
-				"Input and output layers were not appropriately provided.");
+					"Input and output layers were not appropriately provided.");
 		}
 		this.inputLayer = (InputLayer) layers.get(0);
 		this.hiddenLayers = new HiddenLayer[layers.size() - 2];
@@ -118,7 +177,7 @@ public class NeuralNet implements Serializable
 			if (!(layers.get(i) instanceof HiddenLayer))
 			{
 				throw new NeuralNetConstructionException(
-					"Intermediate layer was not constructed as hidden layer.");
+						"Intermediate layer was not constructed as hidden layer.");
 			}
 			hiddenLayers[i - 1] = (HiddenLayer) layers.get(i);
 		}
@@ -256,10 +315,12 @@ public class NeuralNet implements Serializable
 	public void learn(double[][] learningData, double alpha)
 	{
 		long startTime = System.nanoTime();
-		epochs.set(0);
+		epochs = 0;
+		epochsProperty.set(epochs);
 		do
 		{
-			avgSSE.set(0);
+			avgSSE = 0;
+			avgSSEProperty.set(avgSSE);
 			for (double[] inputRow : learningData)
 			{
 				double localError = 0;
@@ -280,12 +341,16 @@ public class NeuralNet implements Serializable
 				{
 					hiddenLayers[i].learn(alpha);
 				}
-				avgSSE.set(avgSSE.get() + localError);
+				avgSSE += localError;
+				avgSSEProperty.set(avgSSE);
 			}
-			epochs.set(epochs.get() + 1);
-			avgSSE.set(avgSSE.get() / learningData.length); // Average square error across all data sets
-			secondsToTrain.set((System.nanoTime() - startTime) / 1.0E9);
-		} while (avgSSE.get() > maxError.get() && epochs.get() < maxEpochs.get());
+			epochs++;
+			epochsProperty.set(epochs);
+			avgSSE /= learningData.length;
+			avgSSEProperty.set(avgSSE); // Average square error across all data sets
+			secondsToTrain = (System.nanoTime() - startTime) / 1.0E9;
+			secondsToTrainProperty.set(secondsToTrain);
+		} while (avgSSE > maxError && epochs < maxEpochs);
 	}
 
 	// Creates edges linking each of the consecutive layers.
@@ -327,7 +392,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getAvgSSE()
 	{
-		return avgSSE.get();
+		return avgSSEProperty.get();
 	}
 
 	/**
@@ -337,7 +402,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getMaxError()
 	{
-		return maxError.get();
+		return maxErrorProperty.get();
 	}
 
 	/**
@@ -347,7 +412,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getSecondsToTrain()
 	{
-		return secondsToTrain.get();
+		return secondsToTrainProperty.get();
 	}
 
 	/**
@@ -357,7 +422,7 @@ public class NeuralNet implements Serializable
 	 */
 	public int getEpochs()
 	{
-		return epochs.get();
+		return epochsProperty.get();
 	}
 
 	/**
@@ -367,8 +432,7 @@ public class NeuralNet implements Serializable
 	 */
 	public int getMaxEpochs()
 	{
-		System.out.println(maxEpochs.get());
-		return maxEpochs.get();
+		return maxEpochsProperty.get();
 	}
 
 	/**
@@ -410,7 +474,7 @@ public class NeuralNet implements Serializable
 	 */
 	public void setMaxError(double maxError)
 	{
-		this.maxError.set(maxError);
+		this.maxErrorProperty.set(maxError);
 	}
 
 	/**
@@ -432,7 +496,7 @@ public class NeuralNet implements Serializable
 	 */
 	public void setMaxEpochs(int maxEpochs)
 	{
-		this.maxEpochs.set(maxEpochs);
+		this.maxEpochsProperty.set(maxEpochs);
 	}
 
 	/**
@@ -446,13 +510,13 @@ public class NeuralNet implements Serializable
 		for (int i = 0; i < hiddenLayers.length; i++)
 		{
 			resetLayers.add(new HiddenLayer(
-				hiddenLayers[i].getNeurons().size()));
+					hiddenLayers[i].getNeurons().size()));
 		}
 		resetLayers.add(new OutputLayer(outputLayer.getNeurons().size()));
 		return resetLayers;
 	}
 
-	public double getMomentumConstant()
+	public double getMomentumConstantProperty()
 	{
 		return Edge.getMomentumConstant();
 	}
@@ -470,45 +534,61 @@ public class NeuralNet implements Serializable
 	 *
 	 * @return
 	 */
-	public SimplerDoubleProperty getMaxErrorProperty()
+	public SimpleDoubleProperty getMaxErrorProperty()
 	{
-		return maxError;
+		return maxErrorProperty;
 	}
 
 	/**
 	 *
 	 * @return
 	 */
-	public SimplerIntegerProperty getMaxEpochsProperty()
+	public SimpleIntegerProperty getMaxEpochsProperty()
 	{
-		return maxEpochs;
+		return maxEpochsProperty;
 	}
 
 	/**
 	 *
 	 * @return
 	 */
-	public SimplerDoubleProperty getAvgSSEProperty()
+	public SimpleDoubleProperty getAvgSSEProperty()
 	{
-		return avgSSE;
+		return avgSSEProperty;
 	}
 
 	/**
 	 *
 	 * @return
 	 */
-	public SimplerDoubleProperty getSecondsToTrainProperty()
+	public SimpleDoubleProperty getSecondsToTrainProperty()
 	{
-		return secondsToTrain;
+		return secondsToTrainProperty;
 	}
 
 	/**
 	 *
 	 * @return
 	 */
-	public SimplerIntegerProperty getEpochsProperty()
+	public SimpleIntegerProperty getEpochsProperty()
 	{
-		return epochs;
+		return epochsProperty;
 	}
 
+	/**
+	 * Restores the values stored in the non-Property fields to the associated
+	 * Properties for this object and its children.
+	 */
+	public void repair()
+	{
+		maxErrorProperty = new SimpleDoubleProperty(maxError);
+		maxEpochsProperty = new SimpleIntegerProperty(maxEpochs);
+		avgSSEProperty = new SimpleDoubleProperty(avgSSE);
+		secondsToTrainProperty = new SimpleDoubleProperty(secondsToTrain);
+		epochsProperty = new SimpleIntegerProperty(epochs);
+		for (Layer layer : getLayers())
+		{
+			layer.repair();
+		}
+	}
 }

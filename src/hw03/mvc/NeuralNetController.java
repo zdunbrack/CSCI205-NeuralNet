@@ -21,8 +21,6 @@ import hw03.model.NeuralNet;
 import hw03.utility.ActivationFunction;
 import hw03.utility.LeakyReLUActivationFunction;
 import hw03.utility.SigmoidActivationFunction;
-import hw03.utility.SimplerDoubleProperty;
-import hw03.utility.SimplerIntegerProperty;
 import hw03.utility.TanhActivationFunction;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +31,8 @@ import java.io.ObjectOutputStream;
 import java.util.Optional;
 import java.util.Scanner;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
@@ -107,6 +107,12 @@ public class NeuralNetController
 	@FXML
 	private Button stopButton;
 	@FXML
+	MenuItem setNumInputNeuronsItem;
+	@FXML
+	MenuItem setNumHiddenNeuronsItem;
+	@FXML
+	MenuItem setNumOutputNeuronsItem;
+	@FXML
 	private MenuItem setLearningRateItem;
 	@FXML
 	private MenuItem setMomentumItem;
@@ -123,8 +129,6 @@ public class NeuralNetController
 	@FXML
 	private CheckMenuItem selectTanhItem;
 	@FXML
-	private MenuItem configureANNItem;
-	@FXML
 	private Menu activationFunctionMenu;
 
 	private NeuralNet model;
@@ -133,9 +137,9 @@ public class NeuralNetController
 
 	private double[][] inputs;
 
-	private SimplerDoubleProperty learningRateProperty;
+	private transient SimpleDoubleProperty learningRateProperty;
 
-	private SimplerIntegerProperty epochsPerUpdateProperty;
+	private transient SimpleIntegerProperty epochsPerUpdateProperty;
 
 	private static final double CIRCLE_RADIUS = 20;
 
@@ -147,9 +151,10 @@ public class NeuralNetController
 	@FXML
 	public void initialize()
 	{
-		learningRateProperty = new SimplerDoubleProperty(NeuralNet.DEFAULT_ALPHA);
-		epochsPerUpdateProperty = new SimplerIntegerProperty(
-			DEFAULT_EPOCHS_PER_UPDATE);
+		learningRateProperty = new SimpleDoubleProperty(NeuralNet.DEFAULT_ALPHA);
+		epochsPerUpdateProperty = new SimpleIntegerProperty(
+				DEFAULT_EPOCHS_PER_UPDATE);
+		selectSigmoidItem.setSelected(true);
 	}
 
 	/**
@@ -220,22 +225,22 @@ public class NeuralNetController
 			{
 				Line edge = new Line();
 				edge.setStartX(
-					inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+						inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
 				edge.setStartY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
-																		inputLayerColumn.getChildren().size(),
-																		inputLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
+																			inputLayerColumn.getChildren().size(),
+																			inputLayerColumn.getSpacing()));
 				edge.setEndX(
-					hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
 				edge.setEndY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
-																		hiddenLayerColumn.getChildren().size(),
-																		hiddenLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
+																			hiddenLayerColumn.getChildren().size(),
+																			hiddenLayerColumn.getSpacing()));
 				edge.strokeProperty().bind(Bindings.when(
-					model.getLayers()[0].getNeurons().get(j).getOutEdges().get(
-						i).getWeightProperty().greaterThan(
-							0)).then(Color.RED).otherwise(
-					Color.GREEN));
+						model.getLayers()[0].getNeurons().get(j).getOutEdges().get(
+								i).getWeightProperty().lessThan(
+										0)).then(Color.RED).otherwise(
+						Color.GREEN));
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}
@@ -245,40 +250,40 @@ public class NeuralNetController
 			{
 				Line edge = new Line();
 				edge.setStartX(
-					hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
 				edge.setStartY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
-																		hiddenLayerColumn.getChildren().size(),
-																		hiddenLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
+																			hiddenLayerColumn.getChildren().size(),
+																			hiddenLayerColumn.getSpacing()));
 				edge.setEndX(
-					outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+						outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
 				edge.setEndY(
-					neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
-																		outputLayerColumn.getChildren().size(),
-																		outputLayerColumn.getSpacing()));
+						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
+																			outputLayerColumn.getChildren().size(),
+																			outputLayerColumn.getSpacing()));
 				edge.strokeProperty().bind(Bindings.when(
-					model.getLayers()[1].getNeurons().get(j).getOutEdges().get(
-						i).getWeightProperty().greaterThan(
-							0)).then(Color.RED).otherwise(
-					Color.GREEN));
+						model.getLayers()[1].getNeurons().get(j).getOutEdges().get(
+								i).getWeightProperty().lessThan(
+										0)).then(Color.RED).otherwise(
+						Color.GREEN));
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}
 		learningRateLabel.textProperty().bind(Bindings.concat("Learning Rate: ",
 															  learningRateProperty));
 		momentumLabel.textProperty().bind(
-			Bindings.concat("Momentum Constant: ",
-							Edge.getMomentumProperty()));
+				Bindings.concat("Momentum Constant: ",
+								Edge.getMomentumProperty()));
 		maxSSELabel.textProperty().bind(Bindings.concat("Max SSE: ",
 														model.getMaxErrorProperty()));
 		epochsPerUpdateLabel.textProperty().bind(Bindings.concat(
-			"Epochs per Update: ", epochsPerUpdateProperty));
+				"Epochs per Update: ", epochsPerUpdateProperty));
 		activationFunctionLabel.setText(
-			"Activation Function: " + model.getActivationFunction().toString());
+				"Activation Function: " + model.getActivationFunction().toString());
 		currentEpochLabel.textProperty().bind(Bindings.concat(
-			"Epoch: ", model.getEpochsProperty()));
+				"Epoch: ", model.getEpochsProperty()));
 		maxEpochsLabel.textProperty().bind(Bindings.concat(
-			"Max Epochs: ", model.getMaxEpochsProperty()));
+				"Max Epochs: ", model.getMaxEpochsProperty()));
 		currentSSELabel.textProperty().bind(Bindings.concat("SSE: ",
 															model.getAvgSSEProperty()));
 		stage.sizeToScene();
@@ -297,7 +302,7 @@ public class NeuralNetController
 		fileChooser.setTitle("Load Training/Classification File");
 		fileChooser.getExtensionFilters().clear();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-			"Comma Separated Values", "*.csv"));
+				"Comma Separated Values", "*.csv"));
 		File dataFile = fileChooser.showOpenDialog(new Stage());
 		Scanner fileScanner;
 		while (dataFile != null)
@@ -322,7 +327,7 @@ public class NeuralNetController
 					if (!(inputStrings[i].length == numInputs + numOutputs || inputStrings[i].length == numInputs))
 					{
 						throw new IllegalArgumentException(
-							"Input file could not be parsed as classification, testing, or learning input.");
+								"Input file could not be parsed as classification, testing, or learning input.");
 					}
 				}
 				inputs = new double[inputStrings.length][inputStrings[0].length];
@@ -347,8 +352,8 @@ public class NeuralNetController
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Save Configuration File");
 		fileChooser.getExtensionFilters().add(
-			new FileChooser.ExtensionFilter(
-				"Neural Net Data File", "*.dat"));
+				new FileChooser.ExtensionFilter(
+						"Neural Net Data File", "*.dat"));
 		File exportFile = fileChooser.showSaveDialog(new Stage());
 		ObjectOutputStream out;
 		while (exportFile != null)
@@ -356,13 +361,14 @@ public class NeuralNetController
 			try
 			{
 				out = new ObjectOutputStream(
-					new FileOutputStream(exportFile));
+						new FileOutputStream(exportFile));
 				out.writeObject(model);
 				out.flush();
 				out.close();
 				break;
 			} catch (IOException e)
 			{
+				e.printStackTrace();
 				exportFile = fileChooser.showSaveDialog(new Stage());
 			}
 		}
@@ -374,8 +380,8 @@ public class NeuralNetController
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setTitle("Load Configuration File");
 		fileChooser.getExtensionFilters().add(
-			new FileChooser.ExtensionFilter(
-				"Neural Net Data File", "*.dat"));
+				new FileChooser.ExtensionFilter(
+						"Neural Net Data File", "*.dat"));
 		File importFile = fileChooser.showOpenDialog(new Stage());
 		NeuralNet importedNet;
 		while (importFile != null)
@@ -383,9 +389,10 @@ public class NeuralNetController
 			try
 			{
 				ObjectInputStream in = new ObjectInputStream(
-					new FileInputStream(
-						importFile));
+						new FileInputStream(
+								importFile));
 				importedNet = (NeuralNet) in.readObject();
+				importedNet.repair();
 				setModel(importedNet, importedNet.getActivationFunction());
 				break;
 			} catch (IOException | ClassNotFoundException e)
@@ -427,9 +434,63 @@ public class NeuralNetController
 	}
 
 	@FXML
-	private void onConfigureANNItemClick()
+	private void onSetNumInputNeuronsItemClick()
 	{
-		setModel(new NeuralNet(), new LeakyReLUActivationFunction());
+		int numInputNeurons = intTextPopup("Set Number of Input Neurons",
+										   "Number of Input Neurons",
+										   model.getLayers()[0].getNeurons().size(),
+										   0,
+										   25);
+		if (numInputNeurons != -1 && numInputNeurons != model.getLayers()[0].getNeurons().size())
+		{
+			NeuralNet newModel = new NeuralNet(new int[]
+			{
+				numInputNeurons, model.getLayers()[1].getNeurons().size(), model.getLayers()[2].getNeurons().size()
+			}, null);
+			newModel.setMaxEpochs(model.getMaxEpochs());
+			newModel.setMaxError(model.getMaxError());
+			setModel(newModel, model.getActivationFunction());
+		}
+	}
+
+	@FXML
+	private void onSetNumHiddenNeuronsItemClick()
+	{
+		int numHiddenNeurons = intTextPopup("Set Number of Hidden Neurons",
+											"Number of Hidden Neurons",
+											model.getLayers()[1].getNeurons().size(),
+											0,
+											25);
+		if (numHiddenNeurons != -1 && numHiddenNeurons != model.getLayers()[0].getNeurons().size())
+		{
+			NeuralNet newModel = new NeuralNet(new int[]
+			{
+				model.getLayers()[0].getNeurons().size(), numHiddenNeurons, model.getLayers()[2].getNeurons().size()
+			}, null);
+			newModel.setMaxEpochs(model.getMaxEpochs());
+			newModel.setMaxError(model.getMaxError());
+			setModel(newModel, model.getActivationFunction());
+		}
+	}
+
+	@FXML
+	private void onSetNumOutputNeuronsItemClick()
+	{
+		int numOutputNeurons = intTextPopup("Set Number of Output Neurons",
+											"Number of Output Neurons",
+											model.getLayers()[2].getNeurons().size(),
+											0,
+											25);
+		if (numOutputNeurons != -1 && numOutputNeurons != model.getLayers()[2].getNeurons().size())
+		{
+			NeuralNet newModel = new NeuralNet(new int[]
+			{
+				model.getLayers()[0].getNeurons().size(), model.getLayers()[1].getNeurons().size(), numOutputNeurons
+			}, null);
+			newModel.setMaxEpochs(model.getMaxEpochs());
+			newModel.setMaxError(model.getMaxError());
+			setModel(newModel, model.getActivationFunction());
+		}
 	}
 
 	@FXML
@@ -449,7 +510,8 @@ public class NeuralNetController
 	{
 		double newMomentum = doubleTextPopup("Set Momentum Constant",
 											 "Momentum Constant",
-											 model.getMomentumConstant(), 0, 1);
+											 model.getMomentumConstantProperty(),
+											 0, 1);
 		if (newMomentum != -1)
 		{
 			model.setMomentumConstant(newMomentum);
@@ -549,7 +611,7 @@ public class NeuralNetController
 	{
 		TextInputDialog dialog = new TextInputDialog(String.valueOf(oldValue));
 		dialog.setHeaderText(
-			"Please provide an integer value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
+				"Please provide an integer value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
 		dialog.setTitle(title);
 		dialog.setContentText(contentText);
 		Optional<String> result = dialog.showAndWait();
@@ -566,8 +628,8 @@ public class NeuralNetController
 			} catch (NumberFormatException e)
 			{
 				dialog.setHeaderText(
-					"The previous value was not a integer value in the given range.\n"
-					+ "Please provide a integer value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
+						"The previous value was not a integer value in the given range.\n"
+						+ "Please provide a integer value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
 				result = dialog.showAndWait();
 			}
 		}
@@ -580,7 +642,7 @@ public class NeuralNetController
 	{
 		TextInputDialog dialog = new TextInputDialog(String.valueOf(oldValue));
 		dialog.setHeaderText(
-			"Please provide a decimal value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
+				"Please provide a decimal value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
 		dialog.setTitle(title);
 		dialog.setContentText(contentText);
 		Optional<String> result = dialog.showAndWait();
@@ -597,8 +659,8 @@ public class NeuralNetController
 			} catch (NumberFormatException e)
 			{
 				dialog.setHeaderText(
-					"The previous value was not a decimal value in the given range.\n"
-					+ "Please provide a decimal value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
+						"The previous value was not a decimal value in the given range.\n"
+						+ "Please provide a decimal value between " + minimum + " (exclusive) and " + maximum + " (inclusive).");
 				result = dialog.showAndWait();
 			}
 		}
