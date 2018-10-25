@@ -19,6 +19,8 @@
 package hw03.model;
 
 import hw03.utility.ActivationFunction;
+import hw03.utility.SimplerDoubleProperty;
+import hw03.utility.SimplerIntegerProperty;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -159,7 +161,7 @@ public class NeuralNet implements Serializable
 	 * @return a three-dimensional array holding all of the weights in the
 	 * neural net
 	 */
-	private double[][][] getEdgeWeights()
+	public double[][][] getEdgeWeights()
 	{
 		Layer[] layers = new Layer[1 + hiddenLayers.length];
 		layers[0] = inputLayer;
@@ -197,7 +199,7 @@ public class NeuralNet implements Serializable
 	 * @return a two-dimensional array holding all of the thresholds in the
 	 * neural net
 	 */
-	private double[][] getThetas()
+	public double[][] getThetas()
 	{
 		double[][] thetas = new double[2 + hiddenLayers.length][];
 		thetas[0] = new double[inputLayer.getNeurons().size()];

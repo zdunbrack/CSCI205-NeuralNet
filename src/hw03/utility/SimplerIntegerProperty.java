@@ -13,7 +13,7 @@
 *
 * ****************************************
  */
-package hw03.model;
+package hw03.utility;
 
 import java.io.Serializable;
 import javafx.beans.property.SimpleIntegerProperty;

@@ -18,11 +18,11 @@ package hw03.mvc;
 import hw03.model.Edge;
 import hw03.model.Layer;
 import hw03.model.NeuralNet;
-import hw03.model.SimplerDoubleProperty;
-import hw03.model.SimplerIntegerProperty;
 import hw03.utility.ActivationFunction;
 import hw03.utility.LeakyReLUActivationFunction;
 import hw03.utility.SigmoidActivationFunction;
+import hw03.utility.SimplerDoubleProperty;
+import hw03.utility.SimplerIntegerProperty;
 import hw03.utility.TanhActivationFunction;
 import java.io.File;
 import java.io.FileInputStream;
@@ -228,6 +228,11 @@ public class NeuralNetController
 						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
 																			hiddenLayerColumn.getChildren().size(),
 																			hiddenLayerColumn.getSpacing()));
+				edge.strokeProperty().bind(Bindings.when(
+						model.getLayers()[0].getNeurons().get(j).getOutEdges().get(
+								i).getWeightProperty().greaterThan(
+										0)).then(Color.RED).otherwise(
+						Color.GREEN));
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}
@@ -248,6 +253,11 @@ public class NeuralNetController
 						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
 																			outputLayerColumn.getChildren().size(),
 																			outputLayerColumn.getSpacing()));
+				edge.strokeProperty().bind(Bindings.when(
+						model.getLayers()[1].getNeurons().get(j).getOutEdges().get(
+								i).getWeightProperty().greaterThan(
+										0)).then(Color.RED).otherwise(
+						Color.GREEN));
 				neuralNetDisplayPane.getChildren().add(edge);
 			}
 		}

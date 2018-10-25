@@ -17,6 +17,7 @@
  */
 package hw03.model;
 
+import hw03.utility.SimplerDoubleProperty;
 import hw03.utility.ActivationFunction;
 import hw03.utility.SigmoidActivationFunction;
 import java.io.Serializable;

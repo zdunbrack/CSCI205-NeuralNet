@@ -18,6 +18,7 @@
  */
 package hw03.model;
 
+import hw03.utility.SimplerDoubleProperty;
 import java.io.Serializable;
 
 /**
@@ -37,14 +38,17 @@ public class Edge implements Serializable
 	private double errorGradient = 0;
 	// The neuron sending data to this edge.
 	private Neuron from;
-	// The constant that decides how aggressively the edge tries to avoid local minima
+	// The constant that decides how aggressively the edge tries to avoid local minima.
 	private static SimplerDoubleProperty momentumConstant = new SimplerDoubleProperty(
 			0.5);
+	// The property associated with the edge's weight
+	private SimplerDoubleProperty weightProperty;
 
 	Edge(Neuron from)
 	{
 		this.prevWeight = 0;
 		this.weight = 0;
+		this.weightProperty = new SimplerDoubleProperty();
 		this.from = from;
 	}
 
@@ -52,6 +56,7 @@ public class Edge implements Serializable
 	{
 		this.prevWeight = weight;
 		this.weight = weight;
+		this.weightProperty = new SimplerDoubleProperty(weight);
 		this.from = from;
 	}
 
@@ -87,9 +92,10 @@ public class Edge implements Serializable
 	 */
 	public void update(double alpha)
 	{
-		double prevWeightDelta = this.weight - this.prevWeight;
-		this.prevWeight = this.weight;
+		double prevWeightDelta = this.weightProperty.get() - this.prevWeight;
+		this.prevWeight = this.weightProperty.get();
 		this.weight += alpha * from.getResult() * errorGradient + momentumConstant.get() * prevWeightDelta;
+		this.weightProperty.set(weight);
 	}
 
 	/**
@@ -131,6 +137,7 @@ public class Edge implements Serializable
 	public void setWeight(double weight)
 	{
 		this.weight = weight;
+		this.weightProperty.set(weight);
 	}
 
 	/**
@@ -158,5 +165,14 @@ public class Edge implements Serializable
 	public static SimplerDoubleProperty getMomentumProperty()
 	{
 		return momentumConstant;
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	public SimplerDoubleProperty getWeightProperty()
+	{
+		return weightProperty;
 	}
 }
