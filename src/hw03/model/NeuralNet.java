@@ -108,7 +108,7 @@ public class NeuralNet implements Serializable
 																			 layers.size() - 1) instanceof OutputLayer))
 		{
 			throw new NeuralNetConstructionException(
-					"Input and output layers were not appropriately provided.");
+				"Input and output layers were not appropriately provided.");
 		}
 		this.inputLayer = (InputLayer) layers.get(0);
 		this.hiddenLayers = new HiddenLayer[layers.size() - 2];
@@ -118,7 +118,7 @@ public class NeuralNet implements Serializable
 			if (!(layers.get(i) instanceof HiddenLayer))
 			{
 				throw new NeuralNetConstructionException(
-						"Intermediate layer was not constructed as hidden layer.");
+					"Intermediate layer was not constructed as hidden layer.");
 			}
 			hiddenLayers[i - 1] = (HiddenLayer) layers.get(i);
 		}
@@ -446,17 +446,22 @@ public class NeuralNet implements Serializable
 		for (int i = 0; i < hiddenLayers.length; i++)
 		{
 			resetLayers.add(new HiddenLayer(
-					hiddenLayers[i].getNeurons().size()));
+				hiddenLayers[i].getNeurons().size()));
 		}
 		resetLayers.add(new OutputLayer(outputLayer.getNeurons().size()));
 		return resetLayers;
+	}
+
+	public double getMomentumConstant()
+	{
+		return Edge.getMomentumConstant();
 	}
 
 	/**
 	 *
 	 * @param momentumConstant
 	 */
-	public void setMomentumConstant(int momentumConstant)
+	public void setMomentumConstant(double momentumConstant)
 	{
 		Edge.setMomentumConstant(momentumConstant);
 	}

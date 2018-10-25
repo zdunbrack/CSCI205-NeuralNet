@@ -29,9 +29,8 @@
             <items>
                   <MenuItem fx:id="configureANNItem" mnemonicParsing="false" onAction="#onConfigureANNItemClick" text="Configure ANN" />
               <MenuItem fx:id="setLearningRateItem" mnemonicParsing="false" onAction="#onSetLearningRateItemClick" text="Set Learning Rate" />
-                  <MenuItem fx:id="setMomentumItem" mnemonicParsing="false" onAction="#onSetMomentumItemClick" text="Set Momentum" />
-                  <MenuItem fx:id="setMaxSSEItem" mnemonicParsing="false" text="Set Maximum Acceptable SSE" />
-                  <MenuItem fx:id="setMaxEpochsItem" mnemonicParsing="false" onAction="#onSetMaxEpochsItemClick" text="Set Maximum Epochs" />
+                  <MenuItem fx:id="setMomentumItem" mnemonicParsing="false" onAction="#onSetMomentumItemClick" text="Set Momentum Constant" />
+                  <MenuItem fx:id="setMaxSSEItem" mnemonicParsing="false" onAction="#onSetMaxSSEItemClick" text="Set Maximum Acceptable SSE" />
                   <MenuItem fx:id="setEpochsPerUpdateItem" mnemonicParsing="false" onAction="#onSetEpochsPerUpdateItemClick" text="Set Epochs per Update" />
                   <Menu fx:id="activationFunctionMenu" mnemonicParsing="false" text="Select Activation Function">
                     <items>
@@ -40,6 +39,7 @@
                         <CheckMenuItem fx:id="selectTanhItem" mnemonicParsing="false" onAction="#onSelectTanhItemClick" text="Hyperbolic Tangent" />
                     </items>
                   </Menu>
+                  <MenuItem fx:id="setMaxEpochsItem" mnemonicParsing="false" onAction="#onSetMaxEpochsItemClick" text="Set Maximum Epochs" />
             </items>
           </Menu>
         </menus>
