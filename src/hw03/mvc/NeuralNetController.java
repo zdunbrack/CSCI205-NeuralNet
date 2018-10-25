@@ -15,8 +15,10 @@
  */
 package hw03.mvc;
 
-import hw03.model.Layer;
+import hw03.model.LeakyReLUActivationFunction;
 import hw03.model.NeuralNet;
+import hw03.utility.SigmoidActivationFunction;
+import hw03.utility.TanhActivationFunction;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -291,17 +293,17 @@ public class NeuralNetController
 						"Neural Net Data File", "*.dat"));
 		File importFile = fileChooser.showOpenDialog(stage);
 		NeuralNet importedNet;
-		while (importFile != null)
+		while(importFile != null)
 		{
 			try
 			{
 				ObjectInputStream in = new ObjectInputStream(
 						new FileInputStream(
 								importFile));
-				importedNet = (NeuralNet) in.readObject();
+				importedNet = (NeuralNet)in.readObject();
 				setModel(importedNet);
 				break;
-			} catch (IOException | ClassNotFoundException e)
+			} catch(IOException | ClassNotFoundException e)
 			{
 				importFile = fileChooser.showOpenDialog(stage);
 			}
@@ -342,43 +344,51 @@ public class NeuralNetController
 	@FXML
 	private void onSetLearningRateItemClick()
 	{
-
+		// set field
 	}
 
 	@FXML
 	private void onSetMomentumItemClick()
 	{
-
+		model.setMomentumConstant(0);
 	}
 
 	@FXML
 	private void onSetMaxEpochsItemClick()
 	{
-
+		model.setMaxEpochs(0);
 	}
 
 	@FXML
 	private void onSetEpochsPerUpdateItemClick()
 	{
-
+		// set field
 	}
 
 	@FXML
 	private void onSelectSigmoidItemClick()
 	{
-
+		resetNeuralNet();
+		model.setActivationFunction(new SigmoidActivationFunction());
 	}
 
 	@FXML
 	private void onSelectReLUItemClick()
 	{
-
+		resetNeuralNet();
+		model.setActivationFunction(new LeakyReLUActivationFunction());
 	}
 
 	@FXML
 	private void onSelectTanhItemClick()
 	{
+		resetNeuralNet();
+		model.setActivationFunction(new TanhActivationFunction());
+	}
 
+	private void resetNeuralNet()
+	{
+		setModel(new NeuralNet(model.getResetLayers(), null));
 	}
 
 	private void assertNonNull()
