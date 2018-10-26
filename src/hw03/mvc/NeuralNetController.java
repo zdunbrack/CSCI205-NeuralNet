@@ -175,9 +175,9 @@ public class NeuralNetController
 	 * Sets the model for the controller and initializes the display based on
 	 * the model.
 	 *
-	 * @param model   the {@link hw03.model.NeuralNet} being worked with
+	 * @param model the {@link hw03.model.NeuralNet} being worked with
 	 * @param actFunc the {@link hw03.utility.ActivationFunction} that the
-	 *                neural net will use on non-input neurons
+	 * neural net will use on non-input neurons
 	 */
 	public void setModel(NeuralNet model, ActivationFunction actFunc)
 	{
@@ -218,7 +218,7 @@ public class NeuralNetController
 		createEdges();
 		bindInfoLabels();
 		stage.sizeToScene();
-		createThresholdLabels();
+		createNeuronLabels();
 	}
 
 	// Binds the labels on the right side of the screen to their necessary text values.
@@ -241,9 +241,10 @@ public class NeuralNetController
 															model.getAvgSSEProperty()));
 	}
 
-	// Creates the labels that show the thresholds for the neural net.
-	private void createThresholdLabels()
+	// Creates the labels that show the thresholds for the neural net and those associated with inputs/outputs.
+	private void createNeuronLabels()
 	{
+		// Threshold Label Creation
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j = 0; j < model.getLayers()[i].getNeurons().size(); j++)
@@ -257,13 +258,46 @@ public class NeuralNetController
 								"%.1f"));
 				neuralNetDisplayPane.getChildren().add(thresholdLabel);
 				thresholdLabel.setLayoutX(
-						currentColumn.getLayoutX() + currentColumn.getWidth() / 2 - 3 * CIRCLE_RADIUS / 4);
+						currentColumn.getLayoutX() + currentColumn.getWidth() / 2 - CIRCLE_RADIUS / 2);
 				thresholdLabel.setLayoutY(heightInVBox(j,
 													   model.getLayers()[i].getNeurons().size(),
 													   currentColumn.getSpacing()) + neuralNetDisplayPane.getHeight() / 2 - CIRCLE_RADIUS / 2);
 				thresholdLabel.setTextAlignment(TextAlignment.CENTER);
 			}
-
+		}
+		// Input/Output Label Creation
+		for (int j = 0; j < model.getLayers()[0].getNeurons().size(); j++)
+		{
+			Label valueLabel = new Label();
+			valueLabel.textFillProperty().set(Color.BLACK);
+			valueLabel.textProperty().bind(
+					model.getLayers()[0].getNeurons().get(j).getResultProperty().add(
+							model.getLayers()[0].getNeurons().get(j).getThetaProperty()).asString(
+							"%.2f"));
+			valueLabel.setLayoutX(
+					inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 - 5 * CIRCLE_RADIUS / 2);
+			valueLabel.setLayoutY(heightInVBox(j,
+											   model.getLayers()[0].getNeurons().size(),
+											   inputLayerColumn.getSpacing()) + neuralNetDisplayPane.getHeight() / 2 - CIRCLE_RADIUS / 2);
+			valueLabel.setTextAlignment(TextAlignment.CENTER);
+			neuralNetDisplayPane.getChildren().add(valueLabel);
+			valueLabel.toFront();
+		}
+		for (int j = 0; j < model.getLayers()[2].getNeurons().size(); j++)
+		{
+			Label valueLabel = new Label();
+			valueLabel.textFillProperty().set(Color.BLACK);
+			valueLabel.textProperty().bind(
+					model.getLayers()[2].getNeurons().get(j).getResultProperty().asString(
+							"%.2f"));
+			valueLabel.setLayoutX(
+					outputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + 3 * CIRCLE_RADIUS / 2);
+			valueLabel.setLayoutY(heightInVBox(j,
+											   model.getLayers()[2].getNeurons().size(),
+											   outputLayerColumn.getSpacing()) + neuralNetDisplayPane.getHeight() / 2 - CIRCLE_RADIUS / 2);
+			valueLabel.setTextAlignment(TextAlignment.CENTER);
+			neuralNetDisplayPane.getChildren().add(valueLabel);
+			valueLabel.toFront();
 		}
 	}
 
@@ -276,13 +310,13 @@ public class NeuralNetController
 			{
 				Line edge = new Line();
 				edge.setStartX(
-						inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+						inputLayerColumn.getLayoutX() + inputLayerColumn.getWidth() / 2);
 				edge.setStartY(
 						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
 																			inputLayerColumn.getChildren().size(),
 																			inputLayerColumn.getSpacing()));
 				edge.setEndX(
-						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2);
 				edge.setEndY(
 						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
 																			hiddenLayerColumn.getChildren().size(),
@@ -304,6 +338,7 @@ public class NeuralNetController
 						weightProperty)
 				);
 				neuralNetDisplayPane.getChildren().add(edge);
+				edge.toBack();
 			}
 		}
 		for (int i = 0; i < outputLayerColumn.getChildren().size(); i++)
@@ -312,13 +347,13 @@ public class NeuralNetController
 			{
 				Line edge = new Line();
 				edge.setStartX(
-						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2 + CIRCLE_RADIUS);
+						hiddenLayerColumn.getLayoutX() + hiddenLayerColumn.getWidth() / 2);
 				edge.setStartY(
 						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(j,
 																			hiddenLayerColumn.getChildren().size(),
 																			hiddenLayerColumn.getSpacing()));
 				edge.setEndX(
-						outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2 - CIRCLE_RADIUS);
+						outputLayerColumn.getLayoutX() + outputLayerColumn.getWidth() / 2);
 				edge.setEndY(
 						neuralNetDisplayPane.getHeight() / 2 + heightInVBox(i,
 																			outputLayerColumn.getChildren().size(),
@@ -338,6 +373,7 @@ public class NeuralNetController
 						weightProperty)
 				);
 				neuralNetDisplayPane.getChildren().add(edge);
+				edge.toBack();
 			}
 		}
 	}
@@ -345,24 +381,17 @@ public class NeuralNetController
 	// Creates the cirular nodes representing neurons in the display.
 	private void createCircles(Layer[] layers)
 	{
-		for (int i = 0; i < layers[0].getNeurons().size(); i++)
+		for (int j = 0; j < 3; j++)
 		{
-			Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
-			neuronRepresentation.fillProperty().set(Color.RED);
-			inputLayerColumn.getChildren().add(neuronRepresentation);
-		}
-		for (int i = 0; i < layers[1].getNeurons().size(); i++)
-
-		{
-			Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
-			neuronRepresentation.fillProperty().set(Color.GREEN);
-			hiddenLayerColumn.getChildren().add(neuronRepresentation);
-		}
-		for (int i = 0; i < layers[2].getNeurons().size(); i++)
-		{
-			Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
-			neuronRepresentation.fillProperty().set(Color.BLUE);
-			outputLayerColumn.getChildren().add(neuronRepresentation);
+			for (int i = 0; i < layers[j].getNeurons().size(); i++)
+			{
+				Circle neuronRepresentation = new Circle(CIRCLE_RADIUS);
+				neuronRepresentation.fillProperty().set(Color.SKYBLUE);
+				neuronRepresentation.strokeProperty().set(Color.BLACK);
+				((VBox) (neuralNetDisplayRow.getChildren().get(j))).getChildren().add(
+						neuronRepresentation);
+				neuronRepresentation.toFront();
+			}
 		}
 	}
 
@@ -522,34 +551,36 @@ public class NeuralNetController
 	@FXML
 	private void onClassifyButtonClick()
 	{
-
 		double[][] classifications = new double[inputs.length][];
+		double[][] realInputs = Arrays.copyOf(inputs, inputs.length);
 		int inputNeurons = model.getLayers()[0].getNeurons().size();
 		int outputNeurons = model.getLayers()[2].getNeurons().size();
 		double[][] expectedOutputs = null;
-		if (inputs.length == 0)
+		if (realInputs.length == 0)
 		{
 			return;
 		}
-		boolean testing = inputs[0].length == inputNeurons + outputNeurons;
+		boolean testing = realInputs[0].length == inputNeurons + outputNeurons;
 		if (testing)
 		{
-			expectedOutputs = new double[inputs.length][inputs[0].length];
-			for (int i = 0; i < inputs.length; i++)
+			expectedOutputs = new double[realInputs.length][realInputs[0].length];
+			for (int i = 0; i < realInputs.length; i++)
 			{
-				expectedOutputs[i] = Arrays.copyOfRange(inputs[i], inputNeurons,
-														inputs[i].length);
-				inputs[i] = Arrays.copyOfRange(inputs[i], 0, inputNeurons);
+				expectedOutputs[i] = Arrays.copyOfRange(realInputs[i],
+														inputNeurons,
+														realInputs[i].length);
+				realInputs[i] = Arrays.copyOfRange(realInputs[i], 0,
+												   inputNeurons);
 			}
 		}
-		for (int i = 0; i < inputs.length; i++)
+		for (int i = 0; i < realInputs.length; i++)
 		{
-			classifications[i] = model.classify(inputs[i]);
+			classifications[i] = model.classify(realInputs[i]);
 		}
 		double testSSE = 0;
 		if (testing)
 		{
-			for (int i = 0; i < inputs.length; i++)
+			for (int i = 0; i < realInputs.length; i++)
 			{
 				for (int j = 0; j < classifications[i].length; j++)
 				{
@@ -569,8 +600,10 @@ public class NeuralNetController
 		fileChooser.setTitle("Save Classification File");
 		fileChooser.getExtensionFilters().add(
 				new FileChooser.ExtensionFilter(
-						"Neural Net Classification File (.csv)", "*.csv"));
+						"Comma Separated Values (.csv)", "*.csv"));
 		File exportFile = fileChooser.showSaveDialog(new Stage());
+
+		System.out.println("Classifying...");
 		while (exportFile != null)
 		{
 			try
@@ -926,11 +959,8 @@ public class NeuralNetController
 						@Override
 						public void run()
 						{
-							if (neuralNet.getAvgSSE() > neuralNet.getMaxError())
-							{
-								neuralNet.learnSingle(inputs[0],
-													  learningRateProperty.get());
-							}
+							neuralNet.learnSingle(inputs[0],
+												  learningRateProperty.get());
 						}
 					});
 				}

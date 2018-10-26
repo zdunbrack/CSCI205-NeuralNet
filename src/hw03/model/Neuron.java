@@ -236,4 +236,14 @@ public class Neuron implements Serializable
 			e.repair();
 		}
 	}
+
+	/**
+	 * Returns the property associated with the neuron's result.
+	 *
+	 * @return the property associated with the neuron's result
+	 */
+	public SimpleDoubleProperty getResultProperty()
+	{
+		return result;
+	}
 }

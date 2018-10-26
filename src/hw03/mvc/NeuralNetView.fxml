@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hw03.mvc.NeuralNetController">
+<VBox style="-fx-background-color: darkgray;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hw03.mvc.NeuralNetController">
    <children>
       <MenuBar>
         <menus>
@@ -60,7 +60,7 @@
                      </opaqueInsets>
                   </VBox>
                   <VBox fx:id="outputLayerColumn" alignment="CENTER" disable="true" prefWidth="150.0" spacing="20.0" />
-                  <VBox fx:id="statusBox" alignment="CENTER_LEFT" spacing="10.0">
+                  <VBox fx:id="statusBox" alignment="CENTER_LEFT" spacing="10.0" style="-fx-border-color: BLACK;">
                      <children>
                         <Label fx:id="statusLabel" text="Status Summary" underline="true">
                            <font>
