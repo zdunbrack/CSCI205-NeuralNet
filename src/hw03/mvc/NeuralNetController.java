@@ -30,9 +30,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Optional;
 import java.util.Scanner;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckMenuItem;
@@ -137,6 +139,8 @@ public class NeuralNetController
 
 	private double[][] inputs;
 
+	private int inputIndex = 0;
+
 	private transient SimpleDoubleProperty learningRateProperty;
 
 	private transient SimpleIntegerProperty epochsPerUpdateProperty;
@@ -144,6 +148,8 @@ public class NeuralNetController
 	private static final double CIRCLE_RADIUS = 20;
 
 	private static final int DEFAULT_EPOCHS_PER_UPDATE = 10;
+
+	private NeuralNetTask task;
 
 	/**
 	 *
@@ -155,15 +161,17 @@ public class NeuralNetController
 		epochsPerUpdateProperty = new SimpleIntegerProperty(
 				DEFAULT_EPOCHS_PER_UPDATE);
 		selectSigmoidItem.setSelected(true);
+		task = new NeuralNetTask(model, inputs, false);
+		inputs = new double[0][0];
 	}
 
 	/**
 	 * Sets the model for the controller and initializes the display based on
 	 * the model.
 	 *
-	 * @param model the {@link hw03.model.NeuralNet} being worked with
+	 * @param model   the {@link hw03.model.NeuralNet} being worked with
 	 * @param actFunc the {@link hw03.utility.ActivationFunction} that the
-	 * neural net will use on non-input neurons
+	 *                neural net will use on non-input neurons
 	 */
 	public void setModel(NeuralNet model, ActivationFunction actFunc)
 	{
@@ -302,7 +310,7 @@ public class NeuralNetController
 		fileChooser.setTitle("Load Training/Classification File");
 		fileChooser.getExtensionFilters().clear();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-				"Comma Separated Values", "*.csv"));
+				"Comma Separated Values (.csv)", "*.csv"));
 		File dataFile = fileChooser.showOpenDialog(new Stage());
 		Scanner fileScanner;
 		while (dataFile != null)
@@ -353,7 +361,7 @@ public class NeuralNetController
 		fileChooser.setTitle("Save Configuration File");
 		fileChooser.getExtensionFilters().add(
 				new FileChooser.ExtensionFilter(
-						"Neural Net Data File", "*.dat"));
+						"Neural Net File (.dat)", "*.dat"));
 		File exportFile = fileChooser.showSaveDialog(new Stage());
 		ObjectOutputStream out;
 		while (exportFile != null)
@@ -381,7 +389,7 @@ public class NeuralNetController
 		fileChooser.setTitle("Load Configuration File");
 		fileChooser.getExtensionFilters().add(
 				new FileChooser.ExtensionFilter(
-						"Neural Net Data File", "*.dat"));
+						"Neural Net File (.dat)", "*.dat"));
 		File importFile = fileChooser.showOpenDialog(new Stage());
 		NeuralNet importedNet;
 		while (importFile != null)
@@ -411,11 +419,32 @@ public class NeuralNetController
 	@FXML
 	private void onSingleStepButtonClick()
 	{
+		if (canLearn())
+		{
+			task.cancel();
+			task = new NeuralNetTask(model, new double[][]
+							 {
+								 inputs[inputIndex]
+			}, true);
+			inputIndex = (inputIndex + 1) % inputs.length;
+			runTask();
+		}
 	}
 
 	@FXML
 	private void onSingleEpochButtonClick()
 	{
+		if (canLearn())
+		{
+			task.cancel();
+			task = new NeuralNetTask(model, inputs, true);
+			runTask();
+		}
+	}
+
+	private boolean canLearn()
+	{
+		return (inputs.length > 0 && inputs[0].length == model.getLayers()[0].getNeurons().size() + model.getLayers()[2].getNeurons().size());
 	}
 
 	@FXML
@@ -426,11 +455,18 @@ public class NeuralNetController
 	@FXML
 	private void onLearnButtonClick()
 	{
+		if (canLearn())
+		{
+			task.cancel();
+			task = new NeuralNetTask(model, inputs, false);
+			runTask();
+		}
 	}
 
 	@FXML
 	private void onStopButtonClick()
 	{
+		task.cancel();
 	}
 
 	@FXML
@@ -674,5 +710,96 @@ public class NeuralNetController
 	public void setStage(Stage stage)
 	{
 		this.stage = stage;
+	}
+
+	private void runTask()
+	{
+		Thread th = new Thread(task);
+		th.setDaemon(true);
+		th.start();
+	}
+
+	/**
+	 * This is the thread that encapsulates the code that facilitates the
+	 * learning of the neural net
+	 */
+	class NeuralNetTask extends Task<Void>
+	{
+
+		private final NeuralNet neuralNet;
+		private final double[][] inputs;
+		private final boolean oneEpoch;
+
+		/**
+		 * COnstruct the task with the model and the number of iterations to run
+		 * through
+		 */
+		public NeuralNetTask(NeuralNet neuralNet, double[][] inputs,
+							 boolean oneEpoch)
+		{
+			this.neuralNet = neuralNet;
+			this.inputs = inputs;
+			this.oneEpoch = oneEpoch;
+		}
+
+		/**
+		 * call - you must override this method in your Task class! This handles
+		 * the actual computations in the separate thread!
+		 *
+		 * @return
+		 * @throws Exception
+		 */
+		@Override
+		protected Void call() throws Exception
+		{
+			int epochsToRun = neuralNet.getMaxEpochs() - neuralNet.getEpochs();
+			if (oneEpoch)
+			{
+				if (inputs.length > 1)
+				{
+					Platform.runLater(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							neuralNet.learn(inputs, learningRateProperty.get(),
+											1, true);
+						}
+					});
+				}
+				else
+				{
+					Platform.runLater(new Runnable()
+					{
+						@Override
+						public void run()
+						{
+							neuralNet.learnSingle(inputs[0],
+												  learningRateProperty.get());
+						}
+					});
+					return null;
+				}
+			}
+			for (int i = 0; i < epochsToRun; i++)
+			{
+				Platform.runLater(new Runnable()
+				{
+					@Override
+					public void run()
+					{
+						neuralNet.learn(inputs, learningRateProperty.get(),
+										1, false);
+					}
+				});
+				if (isCancelled())
+				{
+					updateMessage("Cancelled");
+					break;
+				}
+			}
+
+			return null;
+		}
 	}
 }
