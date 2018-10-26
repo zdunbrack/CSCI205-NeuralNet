@@ -214,8 +214,9 @@ public class Neuron implements Serializable
 	}
 
 	/**
+	 * Returns the property associated with the neuron's threshold value.
 	 *
-	 * @return
+	 * @return the property associated with the neuron's threshold value
 	 */
 	public SimpleDoubleProperty getThetaProperty()
 	{

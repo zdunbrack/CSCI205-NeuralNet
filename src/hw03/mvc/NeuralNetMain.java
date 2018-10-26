@@ -10,7 +10,7 @@
 * Package: hw03.mvc
 * File: NeuralNetMain
 * Description:
-*
+* The main class that runs the entire application.
 * ****************************************
  */
 package hw03.mvc;
@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 /**
+ * The main class that runs the entire application.
  *
  * @author zachd
  */
@@ -34,18 +35,27 @@ public class NeuralNetMain extends Application
 	NeuralNet model;
 	NeuralNetController controller;
 
+	/**
+	 * Runs on initialization; instantiates the model.
+	 */
 	@Override
 	public void init()
 	{
 		model = new NeuralNet();
 	}
 
+	/**
+	 * Tries to start the Java FX application.
+	 *
+	 * @param primaryStage the stage on which the application will be presented
+	 * @throws Exception if loading the FXML file fails
+	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception
 	{
 		FXMLLoader loader = new FXMLLoader(
-				this.getClass().getClassLoader().getResource(
-						"hw03/mvc/NeuralNetView.fxml"));
+			this.getClass().getClassLoader().getResource(
+				"hw03/mvc/NeuralNetView.fxml"));
 
 		Parent root = (Parent) loader.load();
 
@@ -63,6 +73,8 @@ public class NeuralNetMain extends Application
 	}
 
 	/**
+	 * Runs the neural net GUI.
+	 *
 	 * @param args the command line arguments
 	 */
 	public static void main(String[] args)

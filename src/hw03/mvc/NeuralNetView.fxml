@@ -37,7 +37,6 @@
               <MenuItem fx:id="setLearningRateItem" mnemonicParsing="false" onAction="#onSetLearningRateItemClick" text="Set Learning Rate" />
                   <MenuItem fx:id="setMomentumItem" mnemonicParsing="false" onAction="#onSetMomentumItemClick" text="Set Momentum Constant" />
                   <MenuItem fx:id="setMaxSSEItem" mnemonicParsing="false" onAction="#onSetMaxSSEItemClick" text="Set Maximum Acceptable SSE" />
-                  <MenuItem fx:id="setEpochsPerUpdateItem" mnemonicParsing="false" onAction="#onSetEpochsPerUpdateItemClick" text="Set Epochs per Update" />
                   <Menu fx:id="activationFunctionMenu" mnemonicParsing="false" text="Select Activation Function">
                     <items>
                         <CheckMenuItem fx:id="selectSigmoidItem" mnemonicParsing="false" onAction="#onSelectSigmoidItemClick" text="Sigmoid" />
@@ -71,7 +70,6 @@
                         <Label fx:id="learningRateLabel" text="Learning Rate: 0.2" />
                         <Label fx:id="momentumLabel" text="Momentum Constant: 0.5" />
                         <Label fx:id="maxSSELabel" text="Max SSE: 0.1" />
-                        <Label fx:id="epochsPerUpdateLabel" text="Epochs per Update: 10" />
                         <Label fx:id="activationFunctionLabel" text="Activation Function: Sigmoid" />
                         <Separator />
                         <Label fx:id="currentEpochLabel" text="Epoch: 0" />
@@ -102,6 +100,7 @@
             <Button fx:id="classifyButton" mnemonicParsing="false" onAction="#onClassifyButtonClick" text="Classify" />
             <Button fx:id="learnButton" mnemonicParsing="false" onAction="#onLearnButtonClick" text="Learn" />
             <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onStopButtonClick" text="Stop" />
+            <Button fx:id="resetButton" mnemonicParsing="false" onAction="#onResetButtonClick" text="Reset" />
          </children>
          <opaqueInsets>
             <Insets />

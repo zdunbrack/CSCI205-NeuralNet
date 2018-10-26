@@ -41,7 +41,7 @@ public class Edge implements Serializable
 	// The constant that decides how aggressively the edge tries to avoid local minima.
 	private static double momentumConstant = 0.5;
 	private transient static SimpleDoubleProperty momentumConstantProperty = new SimpleDoubleProperty(
-			0.5);
+		0.5);
 	// The property associated with the edge's weight
 	private transient SimpleDoubleProperty weightProperty;
 
@@ -142,8 +142,9 @@ public class Edge implements Serializable
 	}
 
 	/**
+	 * Returns the momentum value for the Edge class.
 	 *
-	 * @return
+	 * @return the momentum value for the Edge class
 	 */
 	public static double getMomentumConstant()
 	{
@@ -151,8 +152,9 @@ public class Edge implements Serializable
 	}
 
 	/**
+	 * Sets the momentum value for the Edge class.
 	 *
-	 * @param newMomentumConstant
+	 * @param newMomentumConstant the new momentum value
 	 */
 	public static void setMomentumConstant(double newMomentumConstant)
 	{
@@ -161,8 +163,9 @@ public class Edge implements Serializable
 	}
 
 	/**
+	 * Returns the Property associated with the momentum.
 	 *
-	 * @return
+	 * @return the Property associated with the momentum.
 	 */
 	public static SimpleDoubleProperty getMomentumProperty()
 	{
@@ -170,8 +173,9 @@ public class Edge implements Serializable
 	}
 
 	/**
+	 * Returns the Property associated with the weight.
 	 *
-	 * @return
+	 * @return the Property associated with the weight
 	 */
 	public SimpleDoubleProperty getWeightProperty()
 	{

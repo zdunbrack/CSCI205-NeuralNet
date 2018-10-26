@@ -88,8 +88,9 @@ public abstract class Layer implements Serializable
 									  WeightAssignment weightAssignment);
 
 	/**
+	 * Returns the list of neurons held in the layer.
 	 *
-	 * @return
+	 * @return the list of neurons held in the layer
 	 */
 	public ArrayList<Neuron> getNeurons()
 	{
