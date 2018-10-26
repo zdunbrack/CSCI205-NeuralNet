@@ -392,7 +392,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getAvgSSE()
 	{
-		return avgSSEProperty.get();
+		return avgSSE;
 	}
 
 	/**
@@ -402,7 +402,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getMaxError()
 	{
-		return maxErrorProperty.get();
+		return maxError;
 	}
 
 	/**
@@ -412,7 +412,7 @@ public class NeuralNet implements Serializable
 	 */
 	public double getSecondsToTrain()
 	{
-		return secondsToTrainProperty.get();
+		return secondsToTrain;
 	}
 
 	/**
@@ -422,7 +422,7 @@ public class NeuralNet implements Serializable
 	 */
 	public int getEpochs()
 	{
-		return epochsProperty.get();
+		return epochs;
 	}
 
 	/**
@@ -432,7 +432,7 @@ public class NeuralNet implements Serializable
 	 */
 	public int getMaxEpochs()
 	{
-		return maxEpochsProperty.get();
+		return maxEpochs;
 	}
 
 	/**
@@ -474,6 +474,7 @@ public class NeuralNet implements Serializable
 	 */
 	public void setMaxError(double maxError)
 	{
+		this.maxError = maxError;
 		this.maxErrorProperty.set(maxError);
 	}
 
@@ -496,6 +497,7 @@ public class NeuralNet implements Serializable
 	 */
 	public void setMaxEpochs(int maxEpochs)
 	{
+		this.maxEpochs = maxEpochs;
 		this.maxEpochsProperty.set(maxEpochs);
 	}
 

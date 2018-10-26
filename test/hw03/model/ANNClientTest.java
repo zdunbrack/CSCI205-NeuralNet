@@ -15,7 +15,6 @@
  */
 package hw03.model;
 
-import hw03.model.ANNClient;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -60,9 +59,9 @@ public class ANNClientTest
 	{
 		// A potential series of inputs from a user that would test
 		// XOR, AND, classification, training, and writing/reading of files.
-		String data = "new 2 1 3 Sigmoid train exampleXOR.csv 0.0001 100000 nnXOR.dat"
+		String data = "new 2 1 3 Sigmoid train exampleXOR.csv 0.0001 1000000 nnXOR.dat"
 					  + " continue classify exampleXOR.csv outputXOR.txt terminate "
-					  + "new 2 1 3 Sigmoid train exampleAND.csv 0.0001 100000 nnAND.dat terminate "
+					  + "new 2 1 3 Sigmoid train exampleAND.csv 0.0001 1000000 nnAND.dat terminate "
 					  + "import nnAND.dat classify exampleAND.csv outputAND.txt terminate";
 		String[] args = new String[0];
 		InputStream testInput = new ByteArrayInputStream(data.getBytes("UTF-8"));
@@ -83,7 +82,7 @@ public class ANNClientTest
 
 			// Test XOR
 			Scanner sc = new Scanner(new FileInputStream(new File(
-				"outputXOR.txt")));
+					"outputXOR.txt")));
 			assertEquals(Double.parseDouble(sc.nextLine()), 0.0, 0.1);
 			assertEquals(Double.parseDouble(sc.nextLine()), 1.0, 0.1);
 			assertEquals(Double.parseDouble(sc.nextLine()), 1.0, 0.1);
