@@ -53,19 +53,19 @@ public class NeuralNet implements Serializable
 	private int epochs = 0;
 	// The maximum sum of squares error at which the machine will stop learning.
 	private transient SimpleDoubleProperty maxErrorProperty = new SimpleDoubleProperty(
-		maxError);
+			maxError);
 	// The maximum number of runs for which the neural network should learn.
 	private transient SimpleIntegerProperty maxEpochsProperty = new SimpleIntegerProperty(
-		maxEpochs);
+			maxEpochs);
 	// The average SSE upon termination of learning over the given data.
 	private transient SimpleDoubleProperty avgSSEProperty = new SimpleDoubleProperty(
-		0);
+			0);
 	// The amount of time spent learning on the given data.
 	private transient SimpleDoubleProperty secondsToTrainProperty = new SimpleDoubleProperty(
-		secondsToTrain);
+			secondsToTrain);
 	// The number of epochs that the neural net has taken to learn on the given data.
 	private transient SimpleIntegerProperty epochsProperty = new SimpleIntegerProperty(
-		epochs);
+			epochs);
 	/**
 	 * The default learning rate for the neural net.
 	 */
@@ -106,12 +106,13 @@ public class NeuralNet implements Serializable
 	 * given {@code numNeurons} array, assigning initial weights to the
 	 * {@link Edge} objects as dictated in {@code weightAssignment}.
 	 *
-	 * @param numNeurons the number of {@link Neuron} objects involved in each
-	 * layer of the neural net
+	 * @param numNeurons       the number of {@link Neuron} objects involved in
+	 *                         each
+	 *                         layer of the neural net
 	 * @param weightAssignment the method of assigning weights; between -0.5 and
-	 * 0.5 randomly distributed if null
+	 *                         0.5 randomly distributed if null
 	 * @throws NeuralNetConstructionException if there are any elements of
-	 * {@code numNeurons} that are at most 0
+	 *                                        {@code numNeurons} that are at most 0
 	 */
 	public NeuralNet(int[] numNeurons, WeightAssignment weightAssignment)
 	{
@@ -124,7 +125,7 @@ public class NeuralNet implements Serializable
 		if (numNeurons.length < 2)
 		{
 			throw new NeuralNetConstructionException(
-				"Cannot construct a neural net with fewer than 2 layers.");
+					"Cannot construct a neural net with fewer than 2 layers.");
 		}
 		this.inputLayer = new InputLayer(numNeurons[0]);
 		layers[0] = this.inputLayer;
@@ -134,13 +135,13 @@ public class NeuralNet implements Serializable
 			if (numNeurons[i] <= 0)
 			{
 				throw new NeuralNetConstructionException(
-					"Cannot construct neural net with 0 or fewer neurons.");
+						"Cannot construct neural net with 0 or fewer neurons.");
 			}
 			hiddenLayers[i - 1] = new HiddenLayer(numNeurons[i]);
 			layers[i] = hiddenLayers[i - 1];
 		}
 		this.outputLayer = new OutputLayer(
-			numNeurons[numNeurons.length - 1]);
+				numNeurons[numNeurons.length - 1]);
 		layers[layers.length - 1] = this.outputLayer;
 		connectLayers(layers);
 	}
@@ -150,11 +151,11 @@ public class NeuralNet implements Serializable
 	 * initial weights to the {@link Edge} objects as dictated in
 	 * {@code weightAssignment}.
 	 *
-	 * @param layers the layers involved in the neural net
+	 * @param layers           the layers involved in the neural net
 	 * @param weightAssignment the method of assigning weights; between -0.5 and
-	 * 0.5 randomly distributed if null
+	 *                         0.5 randomly distributed if null
 	 * @throws NeuralNetConstructionException if the neural net is given
-	 * nonsensical inputs for construction
+	 *                                        nonsensical inputs for construction
 	 */
 	public NeuralNet(List<Layer> layers, WeightAssignment weightAssignment)
 	{
@@ -167,7 +168,7 @@ public class NeuralNet implements Serializable
 																			 layers.size() - 1) instanceof OutputLayer))
 		{
 			throw new NeuralNetConstructionException(
-				"Input and output layers were not appropriately provided.");
+					"Input and output layers were not appropriately provided.");
 		}
 		this.inputLayer = (InputLayer) layers.get(0);
 		this.hiddenLayers = new HiddenLayer[layers.size() - 2];
@@ -177,7 +178,7 @@ public class NeuralNet implements Serializable
 			if (!(layers.get(i) instanceof HiddenLayer))
 			{
 				throw new NeuralNetConstructionException(
-					"Intermediate layer was not constructed as hidden layer.");
+						"Intermediate layer was not constructed as hidden layer.");
 			}
 			hiddenLayers[i - 1] = (HiddenLayer) layers.get(i);
 		}
@@ -196,7 +197,7 @@ public class NeuralNet implements Serializable
 	 *
 	 * @param data an array of inputs to pass into the input neurons
 	 * @return an array of outputs representing the final values at each of the
-	 * output neurons
+	 *         output neurons
 	 */
 	public double[] classify(double[] data)
 	{
@@ -218,7 +219,7 @@ public class NeuralNet implements Serializable
 	 * edges coming log of a given neuron.
 	 *
 	 * @return a three-dimensional array holding all of the weights in the
-	 * neural net
+	 *         neural net
 	 */
 	public double[][][] getEdgeWeights()
 	{
@@ -256,7 +257,7 @@ public class NeuralNet implements Serializable
 	 * associated with it.
 	 *
 	 * @return a two-dimensional array holding all of the thresholds in the
-	 * neural net
+	 *         neural net
 	 */
 	public double[][] getThetas()
 	{
@@ -291,8 +292,8 @@ public class NeuralNet implements Serializable
 	 * attribute. Uses the class field {@code DEFAULT_ALPHA} to learn .
 	 *
 	 * @param learningData a list of data sets on which to learn, each
-	 * containing a list of input values followed immediately by the expected
-	 * output value(s) of the neural net
+	 *                     containing a list of input values followed immediately by the expected
+	 *                     output value(s) of the neural net
 	 */
 	public void learn(double[][] learningData)
 	{
@@ -308,9 +309,9 @@ public class NeuralNet implements Serializable
 	 * attribute. Uses the class field {@code DEFAULT_ALPHA} to learn
 	 *
 	 * @param learningData a list of data sets on which to learn, each
-	 * containing a list of input values followed immediately by the expected
-	 * output value(s) of the neural net
-	 * @param alpha the learning rate for the neural net
+	 *                     containing a list of input values followed immediately by the expected
+	 *                     output value(s) of the neural net
+	 * @param alpha        the learning rate for the neural net
 	 */
 	public void learn(double[][] learningData, double alpha)
 	{
@@ -346,7 +347,8 @@ public class NeuralNet implements Serializable
 			avgSSEProperty.set(avgSSE); // Average square error across all data sets
 			secondsToTrain += (System.nanoTime() - startTime) / 1.0E9;
 			secondsToTrainProperty.set(secondsToTrain);
-		} while (avgSSE > maxError && epochs < maxEpochs);
+		}
+		while (avgSSE > maxError && epochs < maxEpochs);
 	}
 
 	/**
@@ -358,12 +360,14 @@ public class NeuralNet implements Serializable
 	 * attribute. Uses the class field {@code DEFAULT_ALPHA} to learn
 	 *
 	 * @param learningData a list of data sets on which to learn, each
-	 * containing a list of input values followed immediately by the expected
-	 * output value(s) of the neural net
-	 * @param alpha the learning rate for the neural net
-	 * @param numEpochs the maximum number of epochs to train for this run over
-	 * @param forceSSE whether or not the machine should be forced to learn even
-	 * with adequate SSE
+	 *                     containing a list of input values followed immediately by the expected
+	 *                     output value(s) of the neural net
+	 * @param alpha        the learning rate for the neural net
+	 * @param numEpochs    the maximum number of epochs to train for this run
+	 *                     over
+	 * @param forceSSE     whether or not the machine should be forced to learn
+	 *                     even
+	 *                     with adequate SSE
 	 */
 	public void learn(double[][] learningData, double alpha, int numEpochs,
 					  boolean forceSSE)
@@ -437,8 +441,8 @@ public class NeuralNet implements Serializable
 	 * generic {@link Layer}s and returns that array.
 	 *
 	 * @return an array of generic {@link Layer}s starting with an
-	 * {@link InputLayer} followed by some number of {@link HiddenLayer}s and
-	 * terminated by an {@link OutputLayer}
+	 *         {@link InputLayer} followed by some number of {@link HiddenLayer}s and
+	 *         terminated by an {@link OutputLayer}
 	 */
 	public Layer[] getLayers()
 	{
@@ -457,7 +461,7 @@ public class NeuralNet implements Serializable
 	 * training data.
 	 *
 	 * @return the average sum of squared error result from the most recent
-	 * training data
+	 *         training data
 	 */
 	public double getAvgSSE()
 	{
@@ -547,7 +551,7 @@ public class NeuralNet implements Serializable
 	 * learning.
 	 *
 	 * @param maxError the maximum sum of squares error at which the neural net
-	 * stops learning.
+	 *                 stops learning.
 	 */
 	public void setMaxError(double maxError)
 	{
@@ -572,7 +576,7 @@ public class NeuralNet implements Serializable
 	 * Sets the maximum number of epochs before the machine stops learning.
 	 *
 	 * @param maxEpochs the maximum number of epochs before the machine stops
-	 * learning
+	 *                  learning
 	 */
 	public void setMaxEpochs(int maxEpochs)
 	{
@@ -615,7 +619,7 @@ public class NeuralNet implements Serializable
 	 * learn.
 	 *
 	 * @return the property associated with the neural net's max epochs to
-	 * learn.
+	 *         learn.
 	 */
 	public SimpleIntegerProperty getMaxEpochsProperty()
 	{
