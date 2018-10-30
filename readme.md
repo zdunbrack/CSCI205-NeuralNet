@@ -1,7 +1,7 @@
 # CSCI 205 Neural Net Project
 ## Made by: Zach Dunbrack, Josh Dunbrack
 For the most part, everything in this project that is present is functional.
-We did not have time to set up all of the alerts that you would see, so if you do something wrong, the only indication is going to be that nothing changes.
+We did not have time to set up all of the alerts that you would see, so if you do something wrong, the only indication is going to be that nothing changes in the state of the program.
 ## Configuring the ANN
 ### Handling Input Files
 To set up the ANN, you must first give it a file to process.
